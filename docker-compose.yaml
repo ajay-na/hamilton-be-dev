@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # 1. The PostgreSQL Database Container
+  db:
+    image: postgres:16-alpine
+    container_name: expense_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: your_local_password
+      POSTGRES_DB: expense_tracker
+    ports:
+      - '5432:5432'
+    volumes:
+      # saves your database data to local
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d expense_tracker']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Your NestJS API Container
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: expense_backend
+    restart: always
+    ports:
+      - '3000:3000'
+    depends_on:
+      db:
+        # Forces the API to wait until Postgres is 100% booted up
+        condition: service_healthy
+    environment:
+      - NODE_ENV=develop
+      - PORT=3000
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=your_local_password
+      - DB_NAME=expense_tracker
+      - DB_MAX_CONNECTIONS=50
+    volumes:
+      - ./docker-logs:/usr/src/app/logs
+
+volumes:
+  postgres_data:
