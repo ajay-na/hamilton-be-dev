@@ -8,7 +8,6 @@ export class WinstonLoggerService implements LoggerService {
 
   constructor() {
     const logFormat = winston.format.printf((info) => {
-      // 1. Explicitly cast Winston's loosely typed info object to strict types
       const { timestamp, level, context, stack, message } = info as {
         timestamp?: string;
         level: string;
@@ -17,10 +16,8 @@ export class WinstonLoggerService implements LoggerService {
         message: unknown;
       };
 
-      // 2. TypeScript now knows 'context' is either a string or undefined
       const contextStr = context ? `[${context}] ` : '';
 
-      // 3. Safely handle the message: if it's an object, stringify it properly instead of getting [object Object]
       const msgStr = stack
         ? stack
         : typeof message === 'string'

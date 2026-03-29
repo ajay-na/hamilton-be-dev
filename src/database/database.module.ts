@@ -54,10 +54,8 @@ import { DatabaseService } from './database.service';
             'DatabaseModule',
           );
 
-          // 1. Force the pool to close, killing any pending background sockets
           pool.end().catch(() => {});
 
-          // 2. Kill the Node process instantly
           process.exit(1);
         }
 

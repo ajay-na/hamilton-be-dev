@@ -47,7 +47,6 @@ export class DatabaseService implements OnApplicationShutdown {
       return result;
     } catch (error: unknown) {
       await client.query('ROLLBACK');
-      // FIXED: Safely checking if it's an Error before accessing .stack
       this.logger.error(
         'Transaction rolled back due to error',
         error instanceof Error ? error.stack : undefined,

@@ -12,4 +12,10 @@ export default registerAs('config', () => ({
     name: process.env.DB_NAME,
     maxConnections: parseInt(process.env.DB_MAX_CONNECTIONS || '50', 10),
   },
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackUrl: process.env.CALLBACK_URL,
+    jwtSecret: process.env.JWT_SECRET,
+  },
 }));

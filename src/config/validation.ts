@@ -10,4 +10,8 @@ export default Joi.object({
   DB_NAME: Joi.string().required(),
   DB_MAX_CONNECTIONS: Joi.number().required(),
   PROJECT_NAME: Joi.string().required(),
+  GOOGLE_CLIENT_ID: Joi.string().required(),
+  GOOGLE_CLIENT_SECRET: Joi.string().required(),
+  CALLBACK_URL: Joi.string().required(),
+  JWT_SECRET: Joi.string().required(),
 });

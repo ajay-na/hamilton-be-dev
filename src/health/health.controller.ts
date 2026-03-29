@@ -1,4 +1,3 @@
-// src/health/health.controller.ts
 import { Controller, Get, HttpException, HttpStatus } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { WinstonLoggerService } from '../logger/logger.service';
@@ -15,7 +14,6 @@ export class HealthController {
   @Get()
   async check() {
     try {
-      // Actively verify the database connection is alive
       await this.dbService.query('SELECT 1');
 
       return {
