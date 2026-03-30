@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DatabaseService } from 'src/database/database.service';
-import { WinstonLoggerService } from 'src/logger/logger.service';
+import { DatabaseService } from '../../database/database.service';
+import { WinstonLoggerService } from '../../logger/logger.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserProfileResponseDto } from './dto/user-profile.dto';
 import { userUpdateQuery } from './query/user-update-query';
