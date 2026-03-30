@@ -6,7 +6,7 @@ import {
   IsString,
   IsUrl,
 } from 'class-validator';
-import { AtLeastOne } from 'src/common/decorators/at-least-one.decorator';
+import { AtLeastOne } from '../../../common/decorators/at-least-one.decorator';
 
 @AtLeastOne()
 export class UpdateUserDto {
