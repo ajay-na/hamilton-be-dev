@@ -1,16 +1,20 @@
 import { ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import { ExpressAdapter } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import express, { Express } from 'express'; // Import the Express type
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { WinstonLoggerService } from './logger/logger.service';
 
-async function bootstrap() {
-  const logger = new WinstonLoggerService();
-  const app = await NestFactory.create(AppModule, { logger: logger });
-  const config = app.get(ConfigService);
+const server: Express = express();
+
+const logger = new WinstonLoggerService();
+export async function createServer(): Promise<Express> {
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
+    logger,
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -19,8 +23,8 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  app.useGlobalInterceptors(new TransformInterceptor());
 
+  app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalFilters(new AllExceptionsFilter());
   app.enableCors();
 
@@ -43,18 +47,18 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, configSwagger);
   SwaggerModule.setup('api/docs', app, document);
-  const port = config.get<number>('config.port');
 
-  await app.listen(port ?? 3001);
-
-  logger.log(
-    `Application started successfully on port http://localhost:${port ?? 3001}`,
-    'Bootstrap',
-  );
+  await app.init();
+  return server;
 }
 
-bootstrap().catch((error: unknown) => {
-  const stack = error instanceof Error ? error.stack : undefined;
-  console.error('Failed to start application:', stack || error);
-  process.exit(1);
-});
+if (process.env.NODE_ENV !== 'production') {
+  createServer().then(() => {
+    const port = process.env.PORT || 3001;
+    server.listen(port, () => {
+      logger.log(`Application started locally on http://localhost:${port}`);
+    });
+  });
+}
+
+export default server;
