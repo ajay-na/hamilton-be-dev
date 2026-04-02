@@ -38,7 +38,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     profile: Profile,
     done: VerifyCallback,
   ): void {
-    const { name, emails, photos, id } = profile;
+    // Cast to 'any' to bypass Vercel's broken Passport profile type resolution
+    const { name, emails, photos, id } = profile as any;
 
     const user: GoogleUser = {
       googleId: id,
