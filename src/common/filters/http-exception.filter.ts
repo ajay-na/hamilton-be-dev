@@ -5,7 +5,6 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { Response } from 'express';
 
 interface NestError {
   message?: string | string[];
@@ -15,7 +14,9 @@ interface NestError {
 export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
+
+    // Cast to 'any' to bypass Vercel's strict Express namespace merging issue
+    const response = ctx.getResponse<any>();
 
     const status =
       exception instanceof HttpException

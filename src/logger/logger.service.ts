@@ -1,24 +1,6 @@
 import { Injectable, LoggerService, Scope } from '@nestjs/common';
 import * as winston from 'winston';
 
-// Inside your WinstonLoggerService
-const transports: winston.transport[] = [
-  new winston.transports.Console({
-    // Ensure level and format are inside the options object
-    level: 'info',
-    format: winston.format.combine(
-      winston.format.timestamp(),
-      winston.format.json(),
-    ),
-  }),
-];
-
-// ONLY add file transport if NOT on Vercel/Production
-if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
-  transports.push(
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-  );
-}
 @Injectable({ scope: Scope.TRANSIENT })
 export class WinstonLoggerService implements LoggerService {
   private context?: string;
@@ -45,6 +27,38 @@ export class WinstonLoggerService implements LoggerService {
       return `${timestamp || ''} [${level}]: ${contextStr}${msgStr}`;
     });
 
+    // 1. Build the transports array dynamically
+    const transportsList: winston.transport[] = [];
+
+    // 2. File Transports: Only add these if NOT running on Vercel
+    // Vercel has a read-only filesystem, so writing to 'logs/' will crash the app.
+    if (!process.env.VERCEL) {
+      transportsList.push(
+        new winston.transports.File({
+          filename: 'logs/error.log',
+          level: 'error',
+        } as winston.transports.FileTransportOptions), // <-- Typecast fixes TS2353
+      );
+      transportsList.push(
+        new winston.transports.File({
+          filename: 'logs/combined.log',
+        } as winston.transports.FileTransportOptions), // <-- Typecast fixes TS2353
+      );
+    }
+
+    // 3. Console Transport: Always output to console (Vercel captures this automatically)
+    transportsList.push(
+      new winston.transports.Console({
+        format: winston.format.combine(
+          process.env.NODE_ENV !== 'production'
+            ? winston.format.colorize()
+            : winston.format.uncolorize(),
+          logFormat,
+        ),
+      } as winston.transports.ConsoleTransportOptions), // <-- Typecast fixes TS2353
+    );
+
+    // 4. Create the logger with the dynamic transports array
     this.logger = winston.createLogger({
       level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
       format: winston.format.combine(
@@ -52,22 +66,8 @@ export class WinstonLoggerService implements LoggerService {
         winston.format.errors({ stack: true }),
         logFormat,
       ),
-      transports: [
-        new winston.transports.File({
-          filename: 'logs/error.log',
-          level: 'error',
-        }),
-        new winston.transports.File({ filename: 'logs/combined.log' }),
-      ],
+      transports: transportsList,
     });
-
-    if (process.env.NODE_ENV !== 'production') {
-      this.logger.add(
-        new winston.transports.Console({
-          format: winston.format.combine(winston.format.colorize(), logFormat),
-        }),
-      );
-    }
   }
 
   setContext(context: string) {
