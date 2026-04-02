@@ -8,45 +8,37 @@ export class WinstonLoggerService implements LoggerService {
 
   constructor() {
     const logFormat = winston.format.printf((info) => {
-      const { timestamp, level, context, stack, message } = info as {
-        timestamp?: string;
-        level: string;
-        context?: string;
-        stack?: string;
-        message: unknown;
-      };
-
+      // ... (keep your existing logFormat logic here)
+      const { timestamp, level, context, stack, message } = info as any;
       const contextStr = context ? `[${context}] ` : '';
-
       const msgStr = stack
         ? stack
         : typeof message === 'string'
           ? message
           : JSON.stringify(message);
-
       return `${timestamp || ''} [${level}]: ${contextStr}${msgStr}`;
     });
 
-    // 1. Build the transports array dynamically
     const transportsList: winston.transport[] = [];
 
-    // 2. File Transports: Only add these if NOT running on Vercel
-    // Vercel has a read-only filesystem, so writing to 'logs/' will crash the app.
-    if (!process.env.VERCEL) {
+    // 1. ONLY add File transports if running locally.
+    // This strictly prevents the 'mkdir logs' crash on Vercel.
+    if (process.env.NODE_ENV !== 'production') {
       transportsList.push(
         new winston.transports.File({
           filename: 'logs/error.log',
           level: 'error',
-        } as winston.transports.FileTransportOptions), // <-- Typecast fixes TS2353
+        } as winston.transports.FileTransportOptions),
       );
       transportsList.push(
         new winston.transports.File({
           filename: 'logs/combined.log',
-        } as winston.transports.FileTransportOptions), // <-- Typecast fixes TS2353
+        } as winston.transports.FileTransportOptions),
       );
     }
 
-    // 3. Console Transport: Always output to console (Vercel captures this automatically)
+    // 2. ALWAYS add the Console transport.
+    // Vercel reads from stdout/stderr, so this ensures your logs appear in the Vercel dashboard.
     transportsList.push(
       new winston.transports.Console({
         format: winston.format.combine(
@@ -55,10 +47,9 @@ export class WinstonLoggerService implements LoggerService {
             : winston.format.uncolorize(),
           logFormat,
         ),
-      } as winston.transports.ConsoleTransportOptions), // <-- Typecast fixes TS2353
+      } as winston.transports.ConsoleTransportOptions),
     );
 
-    // 4. Create the logger with the dynamic transports array
     this.logger = winston.createLogger({
       level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
       format: winston.format.combine(
