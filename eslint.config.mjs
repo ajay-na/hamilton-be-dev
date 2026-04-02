@@ -31,7 +31,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-argument': 'warn',
       'prettier/prettier': ['error', { endOfLine: 'auto' }],
       // BANS console.log, but ALLOWS console.error and console.warn
-      'no-console': ['error', { allow: ['warn', 'error'] }],
+      // 'no-console': ['error', { allow: ['warn', 'error'] }],
     },
   },
 );

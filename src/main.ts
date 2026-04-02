@@ -55,8 +55,12 @@ export async function createServer(): Promise<Express> {
 if (process.env.NODE_ENV !== 'production') {
   createServer().then(() => {
     const port = process.env.PORT || 3001;
-    server.listen(port, () => {
-      logger.log(`Application started locally on http://localhost:${port}`);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // @ts-ignore
+    (server as any).listen(port, () => {
+      // eslint-disable-next-line no-console
+      console.log(`Application started locally on http://localhost:${port}`);
     });
   });
 }

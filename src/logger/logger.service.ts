@@ -1,6 +1,24 @@
 import { Injectable, LoggerService, Scope } from '@nestjs/common';
 import * as winston from 'winston';
 
+// Inside your WinstonLoggerService
+const transports: winston.transport[] = [
+  new winston.transports.Console({
+    // Ensure level and format are inside the options object
+    level: 'info',
+    format: winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.json(),
+    ),
+  }),
+];
+
+// ONLY add file transport if NOT on Vercel/Production
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  transports.push(
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+  );
+}
 @Injectable({ scope: Scope.TRANSIENT })
 export class WinstonLoggerService implements LoggerService {
   private context?: string;
