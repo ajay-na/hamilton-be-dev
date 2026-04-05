@@ -3,7 +3,8 @@ import { DatabaseService } from '../../database/database.service';
 import { WinstonLoggerService } from '../../logger/logger.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserProfileResponseDto } from './dto/user-profile.dto';
-import { userUpdateQuery } from './query/user-update-query';
+import { userSoftDeleteQuery } from './query/user-soft-delete.query';
+import { userUpdateQuery } from './query/user-update.query';
 
 @Injectable()
 export class UserService {
@@ -51,6 +52,28 @@ export class UserService {
       const [updatedUser] = await this.db.query<UserProfileResponseDto>(
         query,
         values,
+      );
+
+      if (!updatedUser) {
+        throw new NotFoundException('User profile not found or update failed');
+      }
+
+      return updatedUser;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(`Update Error: ${error.message}`, error.stack);
+      } else {
+        this.logger.error('An unknown error occurred in update');
+      }
+      throw error;
+    }
+  }
+
+  async softDeleteUserById(updateUserId: string, currentUserId: string) {
+    try {
+      const [updatedUser] = await this.db.query<UserProfileResponseDto>(
+        userSoftDeleteQuery,
+        [updateUserId, currentUserId],
       );
 
       if (!updatedUser) {
