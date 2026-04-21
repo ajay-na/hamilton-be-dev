@@ -101,7 +101,7 @@ export class UserController {
 
   @ApiOperation({ summary: 'Add vehicle to users profile' })
   @ApiBody({ type: CreateUserVehicleDto })
-  @Roles(Role.ADMIN, Role.STAFF)
+  @UseGuards(JwtAuthGuard)
   @Post('vehicle')
   async addUsersVehicleDetails(
     @Body() body: CreateUserVehicleDto,
