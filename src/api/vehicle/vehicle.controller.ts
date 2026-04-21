@@ -30,7 +30,7 @@ export class VehicleController {
   @ApiPaginatedResponse(GetVehicleByBrandSuccessDTO, true)
   @UseGuards(JwtAuthGuard)
   @Get('search')
-  async searcHVehicleByName(
+  async searchVehicleByName(
     @Query() params: SearchVehicleReqParamDto,
   ): Promise<GetVehicleByBrandSuccessDTO[]> {
     return this.vehicleService.getVehicleByBrandAndName(params);
