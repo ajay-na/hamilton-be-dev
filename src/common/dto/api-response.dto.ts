@@ -2,13 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class BaseResponseDto<TData> {
   @ApiProperty({ example: 'success' })
-  message: string;
+  message!: string;
 
   @ApiProperty({ example: null, nullable: true })
-  error: string | null;
+  error!: string | null;
 
   @ApiProperty({ example: 200 })
-  statusCode: number;
+  statusCode!: number;
 
-  data: TData;
+  data!: TData;
 }

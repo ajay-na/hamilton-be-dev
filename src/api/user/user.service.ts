@@ -1,8 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../../database/database.service';
 import { WinstonLoggerService } from '../../logger/logger.service';
+import { CreateUserVehicleDto } from './dto/add-vehicle-user.dto';
+import { UserVehicleResponseDto } from './dto/get-users-vehicle-response.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserProfileResponseDto } from './dto/user-profile.dto';
+import { addUserVehicleQuery } from './query/add-user-vehicle.query';
+import { getVehicleListByUserId } from './query/get-vehicle-list-by-user-id.query';
 import { userSoftDeleteQuery } from './query/user-soft-delete.query';
 import { userUpdateQuery } from './query/user-update.query';
 
@@ -21,7 +25,7 @@ export class UserService {
     try {
       const [user] = await this.db.query<UserProfileResponseDto>(
         `SELECT id, username, firstname, lastname, email, 
-        gender, image_url, role_id, is_active, created_at, 
+        gender, address, image_url, role_id, is_active, created_at, 
         updated_at
         FROM t_user WHERE id = $1 AND is_active = true`,
         [id],
@@ -86,6 +90,52 @@ export class UserService {
         this.logger.error(`Update Error: ${error.message}`, error.stack);
       } else {
         this.logger.error('An unknown error occurred in update');
+      }
+      throw error;
+    }
+  }
+
+  async getUserVehicleDetails(id: string): Promise<UserVehicleResponseDto[]> {
+    try {
+      const data = await this.db.query<UserVehicleResponseDto>(
+        getVehicleListByUserId,
+        [id],
+      );
+
+      return data.length ? data : [];
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(`FindById Error: ${error.message}`, error.stack);
+      } else {
+        this.logger.error('An unknown error occurred in findById');
+      }
+      throw error;
+    }
+  }
+
+  async addVehicleToUserProfile(
+    body: CreateUserVehicleDto,
+    userId: string,
+  ): Promise<null> {
+    try {
+      await this.db.query<UserVehicleResponseDto>(addUserVehicleQuery, [
+        body.name,
+        body.note,
+        body.license_plate,
+        body.manufactured_year,
+        body.odo_reading,
+        body.vehicle_id,
+        userId,
+        userId,
+        userId,
+      ]);
+
+      return null;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(`FindById Error: ${error.message}`, error.stack);
+      } else {
+        this.logger.error('An unknown error occurred in findById');
       }
       throw error;
     }

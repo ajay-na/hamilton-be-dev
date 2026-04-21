@@ -1,31 +1,17 @@
 import { Knex } from 'knex';
+import { seed } from '../seeds/brand_table_data';
 
 export async function up(knex: Knex): Promise<void> {
-  await knex.schema.createTable('t_user', (table) => {
+  await knex.schema.createTable('m_brand', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
-    table.string('username').unique();
-    table.string('firstname');
-    table.string('lastname');
-    table.string('email').unique();
-    table.string('google_id').unique();
-    table.string('mobile_no', 20);
-    table.string('whatsapp_no', 20);
-    table
-      .string('image_url')
-      .defaultTo('https://api.dicebear.com/7.x/avataaars/svg?seed=Hamilton');
-    table.enum('gender', ['male', 'female', 'others'], {
+    table.string('name').notNullable();
+    table.string('short_form', 10);
+    table.string('brand_logo');
+    table.enum('type', ['spare', 'vehicle'], {
       useNative: true,
-      enumName: 'gender_type',
+      enumName: 'brand_type',
     });
-    table.date('dob');
-    table
-      .integer('role_id')
-      .unsigned()
-      .references('id')
-      .inTable('m_role')
-      .onDelete('SET NULL');
     table.text('note');
-    table.text('address');
     table
       .uuid('created_by')
       .references('id')
@@ -46,9 +32,10 @@ export async function up(knex: Knex): Promise<void> {
       .defaultTo(knex.fn.now());
     table.boolean('is_active').defaultTo(true);
   });
+  await seed(knex);
 }
 
 export async function down(knex: Knex): Promise<void> {
-  await knex.schema.dropTable('t_user');
-  await knex.raw('DROP TYPE public.gender_type;');
+  await knex.schema.dropTable('m_brand');
+  await knex.raw('DROP TYPE public.brand_type;');
 }

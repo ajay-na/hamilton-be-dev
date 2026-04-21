@@ -1,0 +1,280 @@
+{
+  "info": {
+    "_postman_id": "859f05e5-1148-4a01-a28e-0930aae56ffe",
+    "name": "hamilton be",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "user",
+      "item": [
+        {
+          "name": "get profile",
+          "id": "42ab91f8-5d02-46ca-8684-4ef08fbe2a81",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get profile by usr id",
+          "id": "961bfaa3-8d0c-47ab-9b4b-d1aa250eca0f",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/b746c38b-9801-49e1-8ad8-aa88f774e281",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "b746c38b-9801-49e1-8ad8-aa88f774e281"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update self profile",
+          "id": "9d586e36-3576-4a59-83eb-58d293c05e25",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"note\":\"hahah\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update user profile by id",
+          "id": "bc5e4766-a52e-4407-93a7-69e2e1d9bf7d",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"mobile_no\":\"87623876823\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/b746c38b-9801-49e1-8ad8-aa88f774e281",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "b746c38b-9801-49e1-8ad8-aa88f774e281"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete user by user id",
+          "id": "dbd0c111-8506-4521-a359-e10d29f2b9a8",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/b746c38b-9801-49e1-8ad8-aa88f774e281",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "b746c38b-9801-49e1-8ad8-aa88f774e281"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "fe096dfb-cecd-4c1e-8f1a-ad7cebc7a0ed"
+    },
+    {
+      "name": "health check",
+      "id": "5fe72737-c13d-425b-829d-2a27f0d14271",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "login google",
+      "id": "7b94186e-9877-43ee-aaef-80b816023790",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/auth/google",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "google"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "swagger",
+      "id": "588bbdf1-9dbe-42d9-9704-21aadf219df2",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/docs",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "docs"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "id": "8516f470-71f1-4141-902c-54e786d50eb5",
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "id": "b8e79de9-0ee0-4c68-acc6-6c7f51b5a037",
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "id": "dba2ad51-3a80-450c-8efb-51bd96684043",
+      "key": "baseUrl",
+      "value": ""
+    },
+    {
+      "id": "209d8548-60ea-4bc2-9731-235b26b5f5ce",
+      "key": "token",
+      "value": ""
+    },
+    {
+      "id": "583d0e33-b61b-4f50-8903-a41535069b5b",
+      "key": "basedev",
+      "value": ""
+    },
+    {
+      "id": "dd218e63-be9f-494b-a81c-3f7a9801b8e8",
+      "key": "tokendev",
+      "value": ""
+    }
+  ]
+}

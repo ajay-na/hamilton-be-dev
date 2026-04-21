@@ -60,4 +60,12 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   note?: string;
+
+  @ApiPropertyOptional({
+    example: '123, MG Road, Thrissur, Kerala, 680001, India',
+    description: 'Full address of the user',
+  })
+  @IsOptional()
+  @IsString()
+  address?: string;
 }
