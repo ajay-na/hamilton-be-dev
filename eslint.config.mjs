@@ -35,14 +35,3 @@ export default tseslint.config(
     },
   },
 );
-// .eslintrc.js
-rules: {
-  '@typescript-eslint/no-unused-vars': [
-    'error',
-    {
-      'argsIgnorePattern': '^_', // Ignores any argument starting with '_'
-      'varsIgnorePattern': '^_', // Ignores any variable starting with '_'
-      'caughtErrorsIgnorePattern': '^_'
-    }
-  ],
-}
