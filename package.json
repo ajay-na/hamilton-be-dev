@@ -23,7 +23,8 @@
     "start:migrate": "knex migrate:latest",
     "start:rollback": "knex migrate:rollback",
     "start:seed:make": "knex seed:make -x ts",
-    "start:seed": "knex seed:run"
+    "start:seed": "knex seed:run",
+    "start:list": "knex migrate:list"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

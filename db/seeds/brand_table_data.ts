@@ -1,0 +1,98 @@
+import { Knex } from 'knex';
+
+export async function seed(knex: Knex): Promise<void> {
+  await knex('m_brand').del();
+
+  await knex('m_brand').insert([
+    {
+      id: '4729f632-8e1d-4c5a-b924-f7b822d6316a',
+      name: 'toyota motor corp',
+      short_form: 'toyota',
+      brand_logo: 'https://example.com/logos/toyota.png',
+      type: 'vehicle',
+      note: 'Leading Japanese automobile manufacturer.',
+      is_active: true,
+    },
+    {
+      id: 'b9a3dc54-22ef-4109-8d77-6c30f412e9b1',
+      name: 'volkswagen group',
+      short_form: 'vw',
+      brand_logo: 'https://example.com/logos/vw.png',
+      type: 'vehicle',
+      note: 'German multinational automotive company.',
+      is_active: true,
+    },
+    {
+      id: 'a0f291c3-6b8d-4e25-97a1-5f04b39c2d78',
+      name: 'hyundai motor company',
+      short_form: 'hyundai',
+      brand_logo: 'https://example.com/logos/hyundai.png',
+      type: 'vehicle',
+      note: 'South Korean multinational automotive manufacturer.',
+      is_active: true,
+    },
+    {
+      id: '18e27405-d9cb-4fa1-bc62-3928a50f16d4',
+      name: 'ford motor company',
+      short_form: 'ford',
+      brand_logo: 'https://example.com/logos/ford.png',
+      type: 'vehicle',
+      note: 'American multinational automobile manufacturer.',
+      is_active: true,
+    },
+    {
+      id: '18e27405-d9cb-4fa1-bc62-3928a50f16da',
+      name: 'denso corporation',
+      short_form: 'denso',
+      brand_logo: 'https://example.com/logos/denso.png',
+      type: 'spare',
+      note: 'Specializes in spark plugs, fuel injectors, and sensors.',
+      is_active: true,
+    },
+    {
+      id: '18e27405-d9cb-4fa1-bc62-3928a50f16d3',
+      name: 'brembo s.p.a.',
+      short_form: 'brembo',
+      brand_logo: 'https://example.com/logos/brembo.png',
+      type: 'spare',
+      note: 'High-performance braking systems and components.',
+      is_active: true,
+    },
+    {
+      id: '18e27d05-d9cb-4fa1-bc62-3928a50f16d4',
+      name: 'ngk spark plug',
+      short_form: 'ngk',
+      brand_logo: 'https://example.com/logos/ngk.png',
+      type: 'spare',
+      note: 'Global leader in spark plugs and oxygen sensors.',
+      is_active: true,
+    },
+    {
+      id: '28e27d05-d9cb-4fa1-bc62-3928a50f16d4',
+      name: 'michelin',
+      short_form: 'michelin',
+      brand_logo: 'https://example.com/logos/michelin.png',
+      type: 'spare',
+      note: 'Premium tire manufacturer for cars and trucks.',
+      is_active: true,
+    },
+    {
+      id: '18e27d05-d9cb-4fa1-bcf2-3928a50f16d4',
+      name: 'mobil 1',
+      short_form: 'mobil1',
+      brand_logo: 'https://example.com/logos/mobil1.png',
+      type: 'spare',
+      note: 'Synthetic motor oil and engine lubricants.',
+      is_active: true,
+    },
+    {
+      id: '18e27d35-d9cb-4fa1-bc62-3928a50f16d4',
+      name: 'bilstein',
+      short_form: 'bilstein',
+      brand_logo: 'https://example.com/logos/bilstein.png',
+      type: 'spare',
+      note: 'Specialist in shock absorbers and suspension systems.',
+      is_active: true,
+    },
+  ]);
+}

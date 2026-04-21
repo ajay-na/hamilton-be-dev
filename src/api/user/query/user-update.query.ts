@@ -9,7 +9,9 @@ export const userUpdateQuery = (
   id: string,
   updateData: UpdateUserDto,
 ): UpdateQueryResponse => {
-  const entries = Object.entries(updateData as Record<string, unknown>).filter(
+  const entries = Object.entries(
+    updateData as unknown as Record<string, unknown>,
+  ).filter(
     ([, value]) => value !== undefined && value !== null && value !== '',
   );
 

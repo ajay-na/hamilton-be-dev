@@ -31,7 +31,18 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-argument': 'warn',
       'prettier/prettier': ['error', { endOfLine: 'auto' }],
       // BANS console.log, but ALLOWS console.error and console.warn
-      // 'no-console': ['error', { allow: ['warn', 'error'] }],
+      'no-console': ['error', { allow: ['warn', 'error'] }],
     },
   },
 );
+// .eslintrc.js
+rules: {
+  '@typescript-eslint/no-unused-vars': [
+    'error',
+    {
+      'argsIgnorePattern': '^_', // Ignores any argument starting with '_'
+      'varsIgnorePattern': '^_', // Ignores any variable starting with '_'
+      'caughtErrorsIgnorePattern': '^_'
+    }
+  ],
+}

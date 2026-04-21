@@ -4,6 +4,7 @@ import { BaseResponseDto } from '../dto/api-response.dto';
 
 export const ApiPaginatedResponse = <TModel extends Type<any>>(
   model: TModel,
+  isArray = false,
 ) => {
   return applyDecorators(
     ApiExtraModels(BaseResponseDto, model),
@@ -13,7 +14,9 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(
           { $ref: getSchemaPath(BaseResponseDto) },
           {
             properties: {
-              data: { $ref: getSchemaPath(model) },
+              data: isArray
+                ? { type: 'array', items: { $ref: getSchemaPath(model) } }
+                : { $ref: getSchemaPath(model) },
             },
           },
         ],
