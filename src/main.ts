@@ -9,22 +9,20 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 import { WinstonLoggerService } from './logger/logger.service';
 
 const server: Express = express();
-let isInitialized = false; // Serverless cold-start cache
+let app: any; // Cache the initialized Nest application instance
 
-const logger = new WinstonLoggerService();
+export async function bootstrap(): Promise<any> {
+  // Only initialize Nest and Swagger once per serverless container lifespan
+  if (!app) {
+    const logger = new WinstonLoggerService();
 
-export async function bootstrap(): Promise<Express> {
-  // Only initialize Nest once per serverless container lifespan
-  if (!isInitialized) {
-    const app = await NestFactory.create(
+    const nestApp = await NestFactory.create(
       AppModule,
       new ExpressAdapter(server),
-      {
-        logger,
-      },
+      { logger },
     );
 
-    app.useGlobalPipes(
+    nestApp.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
         forbidNonWhitelisted: true,
@@ -32,10 +30,14 @@ export async function bootstrap(): Promise<Express> {
       }),
     );
 
-    app.useGlobalInterceptors(new TransformInterceptor());
-    app.useGlobalFilters(new AllExceptionsFilter());
-    app.enableCors();
+    nestApp.setGlobalPrefix('api/v1');
+    nestApp.useGlobalInterceptors(new TransformInterceptor());
+    nestApp.useGlobalFilters(new AllExceptionsFilter());
+    nestApp.enableCors();
 
+    // ----------------------------------------------------
+    // Swagger is now safely built ONLY during the cold start
+    // ----------------------------------------------------
     const configSwagger = new DocumentBuilder()
       .setTitle('Hamilton API')
       .setDescription('The core authentication and user management API')
@@ -53,21 +55,21 @@ export async function bootstrap(): Promise<Express> {
       )
       .build();
 
-    const document = SwaggerModule.createDocument(app, configSwagger);
-    SwaggerModule.setup('api/docs', app, document);
+    const document = SwaggerModule.createDocument(nestApp, configSwagger);
+    SwaggerModule.setup('api/v1/docs', nestApp, document);
 
-    await app.init();
-    isInitialized = true;
+    await nestApp.init();
+    app = nestApp;
   }
 
-  return server;
+  return app;
 }
 
 // 1. Local Development Execution
 if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
-  bootstrap().then((serverInstance) => {
+  bootstrap().then(() => {
     const port = process.env.PORT || 3001;
-    serverInstance.listen(port, () => {
+    server.listen(port, () => {
       console.log(`Application started locally on http://localhost:${port}`);
     });
   });
@@ -75,6 +77,6 @@ if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
 
 // 2. Vercel Serverless Function Export
 export default async (req: express.Request, res: express.Response) => {
-  const app = await bootstrap();
-  return app(req, res); // Pass the incoming Vercel request to the initialized Express app
+  await bootstrap(); // Ensures everything is ready, but does not rebuild on subsequent requests
+  return server(req, res); // Safely pass the request to the underlying Express server
 };
