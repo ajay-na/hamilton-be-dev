@@ -56,7 +56,16 @@ export async function bootstrap(): Promise<any> {
       .build();
 
     const document = SwaggerModule.createDocument(nestApp, configSwagger);
-    SwaggerModule.setup('api/v1/docs', nestApp, document);
+
+    // Serve Swagger UI assets from a CDN to prevent Vercel static file errors
+    SwaggerModule.setup('api/v1/docs', nestApp, document, {
+      customCssUrl:
+        'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css',
+      customJs: [
+        'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js',
+      ],
+    });
 
     await nestApp.init();
     app = nestApp;
