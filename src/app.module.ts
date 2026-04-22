@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { UserAdminModule } from './api/admin/user/user.module';
 import { BrandModule } from './api/brand/brand.module';
 import { UserModule } from './api/user/user.module';
 import { VehicleModule } from './api/vehicle/vehicle.module';
@@ -22,6 +23,7 @@ import { LoggerModule } from './logger/logger.module';
     UserModule,
     BrandModule,
     VehicleModule,
+    UserAdminModule,
   ],
   controllers: [AppController],
   providers: [],
