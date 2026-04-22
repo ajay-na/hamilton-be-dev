@@ -8,5 +8,5 @@ export class IdParamsDto {
   })
   @IsUUID()
   @IsNotEmpty()
-  id: string;
+  id!: string;
 }
