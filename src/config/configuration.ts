@@ -14,6 +14,7 @@ export default registerAs('config', () => ({
   },
   google: {
     clientId: process.env.GOOGLE_CLIENT_ID,
+    webClientId: process.env.GOOGLE_WEB_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackUrl: process.env.CALLBACK_URL,
     jwtSecret: process.env.JWT_SECRET,

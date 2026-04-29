@@ -14,7 +14,7 @@ export const getVehicleListByUserId = `SELECT
   tuv.updated_by,
   tuv.created_at,
   tuv.updated_at,
-  tuv.is_active  
+  tuv.is_active     
 FROM t_user_vehicle tuv 
 LEFT JOIN m_vehicle mv ON tuv.m_vehicle_id = mv.id 
 LEFT JOIN m_brand mb ON mv.m_brand_id = mb.id 

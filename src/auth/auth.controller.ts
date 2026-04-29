@@ -1,8 +1,11 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { LoginResponseDto } from './dto/login-response.dto';
+import {
+  AndroidGoogleLoginDto,
+  LoginResponseDto,
+} from './dto/login-response.dto';
 import { GoogleUser } from './strategies/google.strategy';
 
 @ApiTags('Authentication')
@@ -36,5 +39,25 @@ export class AuthController {
     @Req() req: { user: GoogleUser },
   ): Promise<LoginResponseDto> {
     return this.authService.login(req.user);
+  }
+
+  @Post('google/android')
+  @ApiOperation({
+    summary: 'Verify Android Native Google Login',
+    description:
+      'Receives the Google id_token from the native Android app, verifies it with Google, and returns a backend JWT access token for the user session.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully authenticated. Returns the backend JWT.',
+    type: AndroidGoogleLoginDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description:
+      'Unauthorized. The Google id_token is invalid, expired, or missing.',
+  })
+  async googleAndroidLogin(@Body('id_token') idToken: string) {
+    return this.authService.verifyAndroidGoogleLogin(idToken);
   }
 }

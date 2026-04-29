@@ -6,6 +6,7 @@ import { CreateUserVehicleDto } from './dto/add-vehicle-user.dto';
 import { UserVehicleResponseDto } from './dto/get-users-vehicle-response.dto';
 import { UserVehicleDetailsResponseDto } from './dto/mobile-no.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserVehicleDto } from './dto/update-vehicle-user.dto';
 import { UserProfileResponseDto } from './dto/user-profile.dto';
 import { addCustomerQuery } from './query/add-customer.query';
 import { addUserVehicleQuery } from './query/add-user-vehicle.query';
@@ -13,6 +14,7 @@ import { getVehicleListByUserId } from './query/get-vehicle-list-by-user-id.quer
 import { searchUserByMobNoQuery } from './query/serch-user-by-mob.query';
 import { userSoftDeleteQuery } from './query/user-soft-delete.query';
 import { userUpdateQuery } from './query/user-update.query';
+import { userVehicleUpdateQuery } from './query/user-vehicle-update.query';
 
 @Injectable()
 export class UserService {
@@ -63,7 +65,7 @@ export class UserService {
       );
 
       if (!updatedUser) {
-        throw new NotFoundException('User profile not found or update failed');
+        throw new NotFoundException('data not found or update failed');
       }
 
       return updatedUser;
@@ -194,6 +196,26 @@ export class UserService {
       if (!data) {
         throw new NotFoundException('User profile not found');
       }
+
+      return data;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(`FindById Error: ${error.message}`, error.stack);
+      } else {
+        this.logger.error('An unknown error occurred in findById');
+      }
+      throw error;
+    }
+  }
+
+  async updateUsersVehicleDetails(
+    vehicleId: string,
+    body: UpdateUserVehicleDto,
+    userId: string,
+  ): Promise<any> {
+    try {
+      const { query, values } = userVehicleUpdateQuery(vehicleId, body, userId);
+      const [data] = await this.db.query<UserVehicleResponseDto>(query, values);
 
       return data;
     } catch (error: unknown) {

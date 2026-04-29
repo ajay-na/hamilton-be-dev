@@ -3,12 +3,17 @@ import { DatabaseService } from '../../database/database.service';
 import { WinstonLoggerService } from '../../logger/logger.service';
 import { CreateUserVehicleDto } from './dto/add-vehicle-user.dto';
 import { UserVehicleResponseDto } from './dto/get-users-vehicle-response.dto';
+import { VehicleResponseDto } from './dto/get-vehicle-detail-by-id-response.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserVehicleDto } from './dto/update-vehicle-user.dto';
 import { UserProfileResponseDto } from './dto/user-profile.dto';
 import { addUserVehicleQuery } from './query/add-user-vehicle.query';
+import { getSlotsQuery } from './query/get-slot-timing.query';
+import { getVehicleDetailsByIdQuery } from './query/get-vehicle-details-by-id.query';
 import { getVehicleListByUserId } from './query/get-vehicle-list-by-user-id.query';
 import { userSoftDeleteQuery } from './query/user-soft-delete.query';
 import { userUpdateQuery } from './query/user-update.query';
+import { userVehicleUpdateQuery } from './query/user-vehicle-update.query';
 
 @Injectable()
 export class UserService {
@@ -95,7 +100,9 @@ export class UserService {
     }
   }
 
-  async getUserVehicleDetails(id: string): Promise<UserVehicleResponseDto[]> {
+  async getUserVehicleDetailsList(
+    id: string,
+  ): Promise<UserVehicleResponseDto[]> {
     try {
       const data = await this.db.query<UserVehicleResponseDto>(
         getVehicleListByUserId,
@@ -131,6 +138,62 @@ export class UserService {
       ]);
 
       return null;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(`FindById Error: ${error.message}`, error.stack);
+      } else {
+        this.logger.error('An unknown error occurred in findById');
+      }
+      throw error;
+    }
+  }
+
+  async updateUsersVehicleDetails(
+    vehicleId: string,
+    body: UpdateUserVehicleDto,
+    userId: string,
+  ): Promise<any> {
+    try {
+      const { query, values } = userVehicleUpdateQuery(vehicleId, body, userId);
+      const [data] = await this.db.query<UserVehicleResponseDto>(query, values);
+
+      return data;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(`FindById Error: ${error.message}`, error.stack);
+      } else {
+        this.logger.error('An unknown error occurred in findById');
+      }
+      throw error;
+    }
+  }
+
+  async getUserVehicleDetailsById(
+    userId: string,
+    vehicleId: string,
+  ): Promise<VehicleResponseDto> {
+    try {
+      const [data] = await this.db.query<VehicleResponseDto>(
+        getVehicleDetailsByIdQuery,
+        [userId, vehicleId],
+      );
+
+      return data;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(`FindById Error: ${error.message}`, error.stack);
+      } else {
+        this.logger.error('An unknown error occurred in findById');
+      }
+      throw error;
+    }
+  }
+
+  async getSlots(date: string): Promise<any> {
+    try {
+      const data = await this.db.query<any>(getSlotsQuery, [date]);
+
+      return data;
     } catch (error: unknown) {
       if (error instanceof Error) {
         this.logger.error(`FindById Error: ${error.message}`, error.stack);
