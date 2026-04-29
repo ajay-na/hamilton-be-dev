@@ -26,6 +26,7 @@ import {
   UserVehicleDetailsResponseDto,
 } from './dto/mobile-no.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserVehicleDto } from './dto/update-vehicle-user.dto';
 import { UserProfileResponseDto } from './dto/user-profile.dto';
 import { UserService } from './user.service';
 
@@ -61,7 +62,7 @@ export class UserController {
   @ApiPaginatedResponse(UserProfileResponseDto)
   @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.STAFF)
   @Patch(':id')
   async updateUserProfile(
     @Param() params: IdParamsDto,
@@ -105,6 +106,19 @@ export class UserController {
     @CurrentUser() user: CurrentuserDto,
   ): Promise<any> {
     return this.userService.addVehicleToUserProfile(param.id, body, user.id);
+  }
+
+  @ApiOperation({ summary: 'update users vehicle details' })
+  @ApiBody({ type: UpdateUserVehicleDto })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.STAFF)
+  @Patch('vehicle/:id')
+  async updateUsersVehicleDetails(
+    @Param() param: IdParamsDto,
+    @Body() body: UpdateUserVehicleDto,
+    @CurrentUser() user: CurrentuserDto,
+  ): Promise<any> {
+    return this.userService.updateUsersVehicleDetails(param.id, body, user.id);
   }
 
   @ApiOperation({ summary: 'Add customer' })

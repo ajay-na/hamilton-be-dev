@@ -18,14 +18,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     @Inject(configuration.KEY)
     private readonly config: ConfigType<typeof configuration>,
   ) {
-    const { clientId, clientSecret, callbackUrl } = config.google;
+    const { webClientId, clientSecret, callbackUrl } = config.google;
 
-    if (!clientId || !clientSecret || !callbackUrl) {
+    if (!webClientId || !clientSecret || !callbackUrl) {
       throw new Error('Google OAuth configuration is missing required fields');
     }
 
     super({
-      clientID: clientId,
+      clientID: webClientId,
       clientSecret: clientSecret,
       callbackURL: callbackUrl,
       scope: ['email', 'profile'],

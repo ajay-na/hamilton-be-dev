@@ -1,12 +1,24 @@
-import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { CurrentuserDto } from '../../auth/dto/current-user.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ApiPaginatedResponse } from '../../common/decorators/api-response.decorator';
+import { IdParamsDto } from '../../common/dto/user-params.dto';
 import { CreateUserVehicleDto } from './dto/add-vehicle-user.dto';
 import { UserVehicleResponseDto } from './dto/get-users-vehicle-response.dto';
+import { VehicleResponseDto } from './dto/get-vehicle-detail-by-id-response.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserVehicleDto } from './dto/update-vehicle-user.dto';
 import { UserProfileResponseDto } from './dto/user-profile.dto';
 import { UserService } from './user.service';
 
@@ -42,10 +54,10 @@ export class UserController {
   @ApiPaginatedResponse(UserVehicleResponseDto, true)
   @UseGuards(JwtAuthGuard)
   @Get('vehicle')
-  async getUserVehicleDetails(
+  async getUserVehicleDetailsList(
     @CurrentUser() params: CurrentuserDto,
   ): Promise<UserVehicleResponseDto[]> {
-    return this.userService.getUserVehicleDetails(params.id);
+    return this.userService.getUserVehicleDetailsList(params.id);
   }
 
   @ApiOperation({ summary: 'Add vehicle to users profile' })
@@ -57,5 +69,37 @@ export class UserController {
     @CurrentUser() user: CurrentuserDto,
   ): Promise<any> {
     return this.userService.addVehicleToUserProfile(body, user.id);
+  }
+
+  @ApiOperation({ summary: 'update users vehicle details' })
+  @ApiBody({ type: UpdateUserVehicleDto })
+  @UseGuards(JwtAuthGuard)
+  @Patch('vehicle/:id')
+  async updateUsersVehicleDetails(
+    @Param() param: IdParamsDto,
+    @Body() body: UpdateUserVehicleDto,
+    @CurrentUser() user: CurrentuserDto,
+  ): Promise<any> {
+    return this.userService.updateUsersVehicleDetails(param.id, body, user.id);
+  }
+
+  @ApiOperation({ summary: 'Get users vehicle detail by vehicle id' })
+  @ApiPaginatedResponse(VehicleResponseDto)
+  @UseGuards(JwtAuthGuard)
+  @Get('vehicle/:id')
+  async getUserVehicleDetails(
+    @Param() idParam: IdParamsDto,
+    @CurrentUser() params: CurrentuserDto,
+  ): Promise<VehicleResponseDto> {
+    return this.userService.getUserVehicleDetailsById(params.id, idParam.id);
+  }
+
+  //dummy
+  @ApiOperation({ summary: 'Get slots' })
+  @ApiPaginatedResponse(VehicleResponseDto)
+  @UseGuards(JwtAuthGuard)
+  @Get('slots')
+  async getSlots(@Query() date: { date: string }): Promise<VehicleResponseDto> {
+    return this.userService.getSlots(date.date);
   }
 }
