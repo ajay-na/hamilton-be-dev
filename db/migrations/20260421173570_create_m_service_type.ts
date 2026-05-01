@@ -1,3 +1,4 @@
+import { seed } from 'db/seeds/service_type_data';
 import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
@@ -5,6 +6,9 @@ export async function up(knex: Knex): Promise<void> {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.string('name').notNullable();
     table.integer('capacity').notNullable();
+    table.integer('approx_service_time').notNullable();
+    table.boolean('is_active').defaultTo(true);
+    table.string('description');
     table
       .uuid('created_by')
       .references('id')
@@ -24,6 +28,7 @@ export async function up(knex: Knex): Promise<void> {
       .notNullable()
       .defaultTo(knex.fn.now());
   });
+  await seed(knex);
 }
 
 export async function down(knex: Knex): Promise<void> {

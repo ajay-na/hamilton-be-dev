@@ -60,4 +60,24 @@ export class AuthController {
   async googleAndroidLogin(@Body('id_token') idToken: string) {
     return this.authService.verifyAndroidGoogleLogin(idToken);
   }
+
+  @Post('google/app')
+  @ApiOperation({
+    summary: 'Verify Android Native Google Login',
+    description:
+      'Receives the Google id_token from the native Android app, verifies it with Google, and returns a backend JWT access token for the user session.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully authenticated. Returns the backend JWT.',
+    type: AndroidGoogleLoginDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description:
+      'Unauthorized. The Google id_token is invalid, expired, or missing.',
+  })
+  async googleMobLogin(@Body('id_token') idToken: string) {
+    return this.authService.verifyMobileGoogleLogin(idToken);
+  }
 }
