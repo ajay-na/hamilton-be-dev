@@ -7,7 +7,26 @@ export async function up(knex: Knex): Promise<void> {
     table.date('override_date');
     table.specificType('start_time', 'TIMESTAMPTZ');
     table.specificType('end_time', 'TIMESTAMPTZ');
+    table.string('description');
     table.boolean('is_blocked').defaultTo(true);
+    table
+      .uuid('created_by')
+      .references('id')
+      .inTable('t_user')
+      .onDelete('SET NULL');
+    table
+      .uuid('updated_by')
+      .references('id')
+      .inTable('t_user')
+      .onDelete('SET NULL');
+    table
+      .specificType('created_at', 'TIMESTAMPTZ')
+      .notNullable()
+      .defaultTo(knex.fn.now());
+    table
+      .specificType('updated_at', 'TIMESTAMPTZ')
+      .notNullable()
+      .defaultTo(knex.fn.now());
   });
   await seed(knex);
 }

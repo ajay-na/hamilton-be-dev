@@ -90,6 +90,38 @@ export class AuthService {
     }
   }
 
+  async verifyMobileGoogleLogin(idToken: string) {
+    try {
+      const ticket = await this.googleClient.verifyIdToken({
+        idToken: idToken,
+        audience: process.env.GOOGLE_WEB_CLIENT_ID,
+      });
+
+      const payload = ticket.getPayload();
+
+      if (!payload) {
+        throw new UnauthorizedException('Invalid Google token payload');
+      }
+
+      const user = await this.verifyUserOnDb(payload);
+
+      if (!user) {
+        throw new Error('Failed to retrieve or create user');
+      }
+
+      return {
+        access_token: this.jwtService.sign({
+          sub: user.id,
+          email: user.email,
+          role: user.role_id,
+          name: user.firstname,
+        }),
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Google authentication failed');
+    }
+  }
+
   async login(googleUser: GoogleUser): Promise<LoginResponseDto> {
     try {
       const user = await this.verifyUserOnDb(googleUser);
