@@ -8,6 +8,7 @@ import {
   BrandDetailResponseDto,
 } from './dto/brand-details.dto';
 import { GetAllBrandDto } from './dto/brand-list.dto';
+import { SearchBrandByNameDto } from './dto/search-brand-by-name.dto';
 import { getAllBrandsQuery } from './query/get-all-brands.query';
 import { getBrandDetailsByIdQuery } from './query/get-brand-details.query';
 import { searchBrandByNameQuery } from './query/search-brand-by-name.query';
@@ -72,12 +73,13 @@ export class BrandService {
   }
 
   async searchBrandByName(
-    name: string,
+    params: SearchBrandByNameDto,
   ): Promise<GetVehicleByBrandSuccessDTO[]> {
     try {
+      const { query, values } = searchBrandByNameQuery(params);
       const data = await this.db.query<GetVehicleByBrandSuccessDTO>(
-        searchBrandByNameQuery(name),
-        [],
+        query,
+        values,
       );
       if (!data) {
         throw new NotFoundException('Brand not found');
