@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { GoogleLoginDto } from './dto/login-req.dto';
 import {
   AndroidGoogleLoginDto,
   LoginResponseDto,
@@ -77,6 +78,7 @@ export class AuthController {
     description:
       'Unauthorized. The Google id_token is invalid, expired, or missing.',
   })
+  @ApiBody({ type: GoogleLoginDto })
   async googleMobLogin(@Body('id_token') idToken: string) {
     return this.authService.verifyMobileGoogleLogin(idToken);
   }

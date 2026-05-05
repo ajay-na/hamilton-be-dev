@@ -13,4 +13,6 @@ export class GetVehicleByBrandSuccessDTO {
   id!: string;
   @ApiProperty({ example: 'BMW M5' })
   name!: string;
+  @ApiProperty({ example: 'vehicle' })
+  type!: string;
 }

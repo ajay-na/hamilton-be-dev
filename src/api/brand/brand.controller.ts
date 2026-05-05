@@ -20,7 +20,7 @@ export class BrandController {
   constructor(private readonly brandService: BrandService) {}
 
   @ApiOperation({ summary: 'Get all brands' })
-  @ApiPaginatedResponse(GetAllBrandDto)
+  @ApiPaginatedResponse(GetAllBrandDto, true)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.STAFF)
   @Get()
@@ -48,6 +48,6 @@ export class BrandController {
   async serachBrandByName(
     @Query() params: SearchBrandByNameDto,
   ): Promise<GetVehicleByBrandSuccessDTO[]> {
-    return this.brandService.searchBrandByName(params.name);
+    return this.brandService.searchBrandByName(params);
   }
 }
