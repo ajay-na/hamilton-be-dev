@@ -10,11 +10,11 @@ export async function seed(knex: Knex): Promise<void> {
     { slot_timing: '10:30' },
     { slot_timing: '11:15' },
     { slot_timing: '12:00' },
-    { slot_timing: '03:00' },
-    { slot_timing: '03:45' },
-    { slot_timing: '04:30' },
-    { slot_timing: '05:30' },
-    { slot_timing: '06:15' },
-    { slot_timing: '07:00' },
+    { slot_timing: '15:00' },
+    { slot_timing: '15:45' },
+    { slot_timing: '16:30' },
+    { slot_timing: '17:30' },
+    { slot_timing: '18:15' },
+    { slot_timing: '19:00' },
   ]);
 }

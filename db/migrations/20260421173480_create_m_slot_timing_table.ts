@@ -1,3 +1,4 @@
+import { seed } from '../seeds/slot_table_data';
 import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
@@ -25,6 +26,8 @@ export async function up(knex: Knex): Promise<void> {
       .notNullable()
       .defaultTo(knex.fn.now());
   });
+
+  await seed(knex);
 }
 
 export async function down(knex: Knex): Promise<void> {

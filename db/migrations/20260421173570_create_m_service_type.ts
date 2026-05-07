@@ -1,5 +1,5 @@
-import { seed } from 'db/seeds/service_type_data';
 import { Knex } from 'knex';
+import { seed } from '../seeds/service_type_data';
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('m_service_type', (table) => {

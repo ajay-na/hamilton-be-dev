@@ -2,11 +2,11 @@ import { IsEmail, IsNumber, IsUUID } from 'class-validator';
 
 export class CurrentuserDto {
   @IsUUID()
-  id: string;
+  id!: string;
 
   @IsEmail()
-  email: string;
+  email!: string;
 
   @IsNumber()
-  role: number;
+  role!: number;
 }

@@ -8,6 +8,7 @@ import {
   LoginResponseDto,
 } from './dto/login-response.dto';
 import { GoogleUser } from './strategies/google.strategy';
+import { LoginBody } from './dto/login-body.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -81,5 +82,15 @@ export class AuthController {
   @ApiBody({ type: GoogleLoginDto })
   async googleMobLogin(@Body('id_token') idToken: string) {
     return this.authService.verifyMobileGoogleLogin(idToken);
+  }
+
+  @Post('admin/login')
+  async adminLogin(@Body() body: LoginBody) {
+    return this.authService.adminLogin(body);
+  }
+
+  @Post('admin/register')
+  async adminRegister(@Body() body: LoginBody) {
+    return this.authService.registerAdmin(body);
   }
 }

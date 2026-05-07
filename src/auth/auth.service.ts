@@ -1,7 +1,14 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { OAuth2Client } from 'google-auth-library';
 import { DatabaseService } from '../database/database.service';
+import { LoginBody } from './dto/login-body.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { GoogleUser } from './strategies/google.strategy';
 
@@ -134,6 +141,64 @@ export class AuthService {
         email: user.email,
         role: user.role_id,
         name: user.firstname,
+      };
+
+      return {
+        access_token: this.jwtService.sign(payload),
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async registerAdmin(body: LoginBody) {
+    try {
+      const { username, password } = body;
+      const salt = await bcrypt.genSalt(10);
+
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const [user] = await this.db.query(
+        `INSERT INTO t_user (firstname, username, password_hash, salt, role_id) 
+         VALUES ($1, $2, $3, $4, $5) 
+         RETURNING id, email, role_id, firstname;`,
+        ['admin', username, hashedPassword, salt, 1],
+      );
+
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async adminLogin(body: LoginBody) {
+    try {
+      const { username, password } = body;
+
+      const [user] = await this.db.query(
+        'SELECT username, password_hash FROM t_user WHERE username = $1',
+        [username],
+      );
+
+      if (!user) {
+        throw new ForbiddenException('Invalid credentials');
+      }
+
+      const isValid = await bcrypt.compare(password, user.password_hash);
+      if (!isValid) {
+        throw new ForbiddenException('Invalid credentials');
+      }
+
+      const [userDetails] = await this.db.query<UserEntity>(
+        'SELECT id, email, role_id, firstname FROM t_user WHERE username = $1',
+        [username],
+      );
+
+      const payload = {
+        sub: userDetails.id,
+        email: userDetails.email,
+        role: userDetails.role_id,
+        name: userDetails.firstname,
       };
 
       return {

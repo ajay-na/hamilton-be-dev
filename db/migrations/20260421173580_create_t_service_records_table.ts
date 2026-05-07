@@ -22,8 +22,11 @@ export async function up(knex: Knex): Promise<void> {
       .references('id')
       .inTable('t_user')
       .onDelete('SET NULL');
-    table.date('booking_date');
-    table.string('slot_timing');
+    table
+      .uuid('t_slot_id')
+      .references('id')
+      .inTable('t_slot_booking')
+      .onDelete('SET NULL');
     table
       .uuid('advisor_id')
       .references('id')
@@ -46,18 +49,15 @@ export async function up(knex: Knex): Promise<void> {
         enumName: 'payment_status_enum',
       })
       .defaultTo('pending');
-
     table.specificType('slot_timing', 'TIMESTAMPTZ');
     table.specificType('service_in_time', 'TIMESTAMPTZ');
     table.specificType('service_out_time', 'TIMESTAMPTZ');
     table.integer('odo_reading');
     table.text('note');
-
     table.decimal('total_parts_cost', 10, 2).defaultTo(0);
     table.decimal('total_labor_cost', 10, 2).defaultTo(0);
     table.decimal('grand_total', 10, 2).defaultTo(0);
     table.decimal('discount', 10, 2).defaultTo(0);
-
     table
       .uuid('created_by')
       .references('id')

@@ -79,7 +79,9 @@ if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   bootstrap().then(() => {
     const port = process.env.PORT || 3001;
     server.listen(port, () => {
-      console.log(`Application started locally on http://localhost:${port}`);
+      console.log(
+        `Application started locally on http://localhost:${port}/api/v1`,
+      );
     });
   });
 }
