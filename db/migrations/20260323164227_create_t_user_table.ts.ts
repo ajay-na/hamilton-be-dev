@@ -25,6 +25,7 @@ export async function up(knex: Knex): Promise<void> {
       .inTable('m_role')
       .onDelete('SET NULL');
     table.text('note');
+    table.string('password_hash');
     table.text('address');
     table
       .uuid('created_by')
