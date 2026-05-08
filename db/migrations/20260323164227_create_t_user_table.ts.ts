@@ -26,6 +26,7 @@ export async function up(knex: Knex): Promise<void> {
       .onDelete('SET NULL');
     table.text('note');
     table.string('password_hash');
+    table.string('salt');
     table.text('address');
     table
       .uuid('created_by')
