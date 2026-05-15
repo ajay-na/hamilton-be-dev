@@ -9,6 +9,7 @@ export async function up(knex: Knex): Promise<void> {
     table.integer('approx_service_time').notNullable();
     table.boolean('is_active').defaultTo(true);
     table.string('description');
+    table.string('image_url');
     table
       .uuid('created_by')
       .references('id')
