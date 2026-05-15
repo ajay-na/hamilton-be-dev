@@ -63,10 +63,17 @@ export class AddUserDto {
   @IsString()
   whatsapp_no?: string;
 
-  @ApiPropertyOptional({ example: 'admin', enum: ['admin', 'staff', 'user'] })
+  @ApiPropertyOptional({
+    description: 'Role id of the user(admin-1, staff-2, customer-3',
+    example: 3,
+    enum: [1, 2, 3],
+  })
   @IsOptional()
-  @IsEnum(['admin', 'staff', 'user'])
-  role_id?: string;
+  @IsEnum([1, 2, 3], {
+    message:
+      'Invalid role_id. Accepted values: 1 (admin), 2 (staff), 3 (customer)',
+  })
+  role_id?: number;
 
   @ApiPropertyOptional({ example: 'any specific details' })
   @IsOptional()
