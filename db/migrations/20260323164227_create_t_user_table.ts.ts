@@ -8,8 +8,8 @@ export async function up(knex: Knex): Promise<void> {
     table.string('lastname');
     table.string('email').unique();
     table.string('google_id').unique();
-    table.string('mobile_no', 20);
-    table.string('whatsapp_no', 20);
+    table.string('mobile_no', 20).unique();
+    table.string('whatsapp_no', 20).unique();
     table
       .string('image_url')
       .defaultTo('https://api.dicebear.com/7.x/avataaars/svg?seed=Hamilton');
