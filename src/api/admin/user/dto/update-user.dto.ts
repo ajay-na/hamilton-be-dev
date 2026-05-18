@@ -11,7 +11,7 @@ import {
 import { AtLeastOne } from '../../../../common/decorators/at-least-one.decorator';
 
 @AtLeastOne()
-export class UpdateUserDto {
+export class AdminUpdateUserDto {
   @ApiPropertyOptional({ example: 'Hamilton' })
   @IsOptional()
   @IsString()

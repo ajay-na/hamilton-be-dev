@@ -5,7 +5,7 @@ import { AddUserDto } from './dto/add-customer.dto';
 import { CreateUserVehicleDto } from './dto/add-vehicle-user.dto';
 import { UserVehicleResponseDto } from './dto/get-users-vehicle-response.dto';
 import { UserVehicleDetailsResponseDto } from './dto/mobile-no.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { AdminUpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserVehicleDto } from './dto/update-vehicle-user.dto';
 import { UserProfileResponseDto } from './dto/user-profile.dto';
 import { addCustomerQuery } from './query/add-customer.query';
@@ -54,7 +54,7 @@ export class UserService {
 
   async update(
     id: string,
-    updateData: UpdateUserDto,
+    updateData: AdminUpdateUserDto,
   ): Promise<UserProfileResponseDto> {
     try {
       const { query, values } = userUpdateQuery(id, updateData);
