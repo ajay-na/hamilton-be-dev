@@ -23,9 +23,16 @@ export class VehicleServiceAdminController {
     private readonly vehicleServiceAdminService: VehicleServiceAdminService,
   ) {}
 
+  @Get('live')
+  @ApiOperation({ summary: 'Get live service details' })
+  @ApiPaginatedResponse(ServiceTicketDto)
+  async getLiveServiceDetails(): Promise<ServiceTicketDto[]> {
+    return this.vehicleServiceAdminService.getLiveServiceDetails();
+  }
+
   @ApiOperation({ summary: 'Get vehicle service status' })
   @ApiPaginatedResponse(ServiceTicketDto)
-  @Get(':id')
+  @Get('details/:id')
   async getVehicleServiceStatus(
     @Param() param: IdParamsDto,
   ): Promise<ServiceTicketDto> {
