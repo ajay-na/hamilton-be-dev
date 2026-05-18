@@ -25,7 +25,7 @@ import {
   SearchUserWithMobNo,
   UserVehicleDetailsResponseDto,
 } from './dto/mobile-no.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { AdminUpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserVehicleDto } from './dto/update-vehicle-user.dto';
 import { UserProfileResponseDto } from './dto/user-profile.dto';
 import { UserService } from './user.service';
@@ -66,7 +66,7 @@ export class UserController {
   @Patch(':id')
   async updateUserProfile(
     @Param() params: IdParamsDto,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateUserDto: AdminUpdateUserDto,
   ): Promise<UserProfileResponseDto> {
     return this.userService.update(params.id, updateUserDto);
   }

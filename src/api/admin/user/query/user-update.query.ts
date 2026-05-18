@@ -1,4 +1,4 @@
-import { UpdateUserDto } from '../dto/update-user.dto';
+import { AdminUpdateUserDto } from '../dto/update-user.dto';
 
 export interface UpdateQueryResponse {
   query: string;
@@ -7,7 +7,7 @@ export interface UpdateQueryResponse {
 
 export const userUpdateQuery = (
   id: string,
-  updateData: UpdateUserDto,
+  updateData: AdminUpdateUserDto,
 ): UpdateQueryResponse => {
   const entries = Object.entries(
     updateData as unknown as Record<string, unknown>,
