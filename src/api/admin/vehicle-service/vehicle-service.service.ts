@@ -6,6 +6,7 @@ import { ServiceTicketDto } from './dto/get-veicle-service-details.dto';
 import { InitiateServiceReqBodyDto } from './dto/initiate-service-req-body.dto';
 import { UpdateServiceStatusReqBodyDto } from './dto/update-service-status-req-body.dto';
 import { addServiceHistoryQuery } from './query/change-service-status.query';
+import { getLiveServiceDetailsQuery } from './query/get-live-service-details.query';
 import { getServiceDetailsQuery } from './query/getServiceDetails.query';
 import { insertServiceDetailsInitialQuery } from './query/insert-service-details.query';
 
@@ -90,6 +91,24 @@ export class VehicleServiceAdminService {
       if (error instanceof Error) {
         this.logger.error(
           `Error updating service: ${error.message}`,
+          error.stack,
+        );
+      }
+      throw error;
+    }
+  }
+
+  async getLiveServiceDetails(): Promise<ServiceTicketDto[]> {
+    try {
+      const data = await this.db.query<ServiceTicketDto>(
+        getLiveServiceDetailsQuery,
+        [],
+      );
+      return data;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(
+          `Error fetching live service details: ${error.message}`,
           error.stack,
         );
       }
