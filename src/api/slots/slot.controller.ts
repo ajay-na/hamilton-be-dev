@@ -8,7 +8,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { CurrentuserDto } from '../../auth/dto/current-user.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -49,6 +49,7 @@ export class SlotController {
 
   @ApiOperation({ summary: 'Update booked slot' })
   @ApiPaginatedResponse(SlotTimingDto, true)
+  @ApiBody({ type: UpdateBookingDto })
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async updateBookedSlot(

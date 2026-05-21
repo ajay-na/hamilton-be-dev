@@ -67,8 +67,9 @@ export class UserController {
   async updateUserProfile(
     @Param() params: IdParamsDto,
     @Body() updateUserDto: AdminUpdateUserDto,
+    @CurrentUser() user: CurrentuserDto,
   ): Promise<UserProfileResponseDto> {
-    return this.userService.update(params.id, updateUserDto);
+    return this.userService.update(params.id, updateUserDto, user.id);
   }
 
   @ApiOperation({ summary: 'Soft delete user by id' })

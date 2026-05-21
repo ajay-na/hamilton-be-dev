@@ -1,14 +1,25 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ApiPaginatedResponse } from 'src/common/decorators/api-response.decorator';
-import { IdParamsDto } from 'src/common/dto/user-params.dto';
 import { CurrentUser } from '../../../auth/decorators/current-user.decorator';
 import { Roles } from '../../../auth/decorators/roles.decorator';
 import { CurrentuserDto } from '../../../auth/dto/current-user.dto';
 import { Role } from '../../../auth/enums/role.enum';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../auth/guards/roles.guard';
+import { ApiPaginatedResponse } from '../../../common/decorators/api-response.decorator';
+import { DateParamDto } from '../../../common/dto/date-param.dto';
+import { IdParamsDto } from '../../../common/dto/user-params.dto';
+import { UpcomingServiceResponseDto } from './dto/get-upcoming-service-details-respononse.dto';
 import { ServiceTicketDto } from './dto/get-veicle-service-details.dto';
+import { ServiceRecordResponseDto } from './dto/gte-live-vehicle-status.dto';
 import { InitiateServiceReqBodyDto } from './dto/initiate-service-req-body.dto';
 import { UpdateServiceStatusReqBodyDto } from './dto/update-service-status-req-body.dto';
 import { VehicleServiceAdminService } from './vehicle-service.service';
@@ -25,9 +36,20 @@ export class VehicleServiceAdminController {
 
   @Get('live')
   @ApiOperation({ summary: 'Get live service details' })
-  @ApiPaginatedResponse(ServiceTicketDto)
-  async getLiveServiceDetails(): Promise<ServiceTicketDto[]> {
+  @ApiPaginatedResponse(ServiceRecordResponseDto, true)
+  async getLiveServiceDetails(): Promise<ServiceRecordResponseDto[]> {
     return this.vehicleServiceAdminService.getLiveServiceDetails();
+  }
+
+  @Get('upcoming')
+  @ApiOperation({ summary: 'Get upcoming service details' })
+  @ApiPaginatedResponse(UpcomingServiceResponseDto, true)
+  async getUpcomingServiceDetails(
+    @Query() param: DateParamDto,
+  ): Promise<UpcomingServiceResponseDto[]> {
+    return this.vehicleServiceAdminService.getUpcomingServiceDetails(
+      param.date,
+    );
   }
 
   @ApiOperation({ summary: 'Get vehicle service status' })
