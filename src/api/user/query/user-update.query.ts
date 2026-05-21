@@ -29,7 +29,7 @@ export const userUpdateQuery = (
     UPDATE t_user 
     SET ${setClause}, updated_at = NOW(), updated_by = $${entries.length + 1} 
     WHERE id = $${entries.length + 1} AND is_active = true
-    RETURNING *;
+    RETURNING id;
   `;
 
   values.push(id);

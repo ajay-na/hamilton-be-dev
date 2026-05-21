@@ -2,11 +2,14 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { IdParamsDto } from 'src/common/dto/user-params.dto';
 import { DatabaseService } from '../../../database/database.service';
 import { WinstonLoggerService } from '../../../logger/logger.service';
+import { UpcomingServiceResponseDto } from './dto/get-upcoming-service-details-respononse.dto';
 import { ServiceTicketDto } from './dto/get-veicle-service-details.dto';
+import { ServiceRecordResponseDto } from './dto/gte-live-vehicle-status.dto';
 import { InitiateServiceReqBodyDto } from './dto/initiate-service-req-body.dto';
 import { UpdateServiceStatusReqBodyDto } from './dto/update-service-status-req-body.dto';
 import { addServiceHistoryQuery } from './query/change-service-status.query';
 import { getLiveServiceDetailsQuery } from './query/get-live-service-details.query';
+import { getUpcomingServiceDetailsQuery } from './query/get-upcoming-service-details.query';
 import { getServiceDetailsQuery } from './query/getServiceDetails.query';
 import { insertServiceDetailsInitialQuery } from './query/insert-service-details.query';
 
@@ -98,9 +101,9 @@ export class VehicleServiceAdminService {
     }
   }
 
-  async getLiveServiceDetails(): Promise<ServiceTicketDto[]> {
+  async getLiveServiceDetails(): Promise<ServiceRecordResponseDto[]> {
     try {
-      const data = await this.db.query<ServiceTicketDto>(
+      const data = await this.db.query<ServiceRecordResponseDto>(
         getLiveServiceDetailsQuery,
         [],
       );
@@ -109,6 +112,26 @@ export class VehicleServiceAdminService {
       if (error instanceof Error) {
         this.logger.error(
           `Error fetching live service details: ${error.message}`,
+          error.stack,
+        );
+      }
+      throw error;
+    }
+  }
+
+  async getUpcomingServiceDetails(
+    date: string,
+  ): Promise<UpcomingServiceResponseDto[]> {
+    try {
+      const data = await this.db.query<UpcomingServiceResponseDto>(
+        getUpcomingServiceDetailsQuery,
+        [date],
+      );
+      return data;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(
+          `Error fetching upcoming service details: ${error.message}`,
           error.stack,
         );
       }

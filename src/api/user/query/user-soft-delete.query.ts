@@ -4,4 +4,4 @@ export const userSoftDeleteQuery = `UPDATE t_user tu
     updated_at = NOW(), 
     updated_by = $2
   WHERE tu.id =$1
-  RETURNING *;`;
+  RETURNING id,is_active;`;

@@ -55,9 +55,10 @@ export class UserService {
   async update(
     id: string,
     updateData: AdminUpdateUserDto,
+    currentUser: string,
   ): Promise<UserProfileResponseDto> {
     try {
-      const { query, values } = userUpdateQuery(id, updateData);
+      const { query, values } = userUpdateQuery(id, updateData, currentUser);
 
       const [updatedUser] = await this.db.query<UserProfileResponseDto>(
         query,
