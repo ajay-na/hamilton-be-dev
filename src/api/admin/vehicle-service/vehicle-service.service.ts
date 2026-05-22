@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { IdParamsDto } from 'src/common/dto/user-params.dto';
 import { DatabaseService } from '../../../database/database.service';
 import { WinstonLoggerService } from '../../../logger/logger.service';
+import { AddCostReqBodyDto } from './dto/add-cost-for-service.dto';
 import { UpcomingServiceResponseDto } from './dto/get-upcoming-service-details-respononse.dto';
 import { ServiceTicketDto } from './dto/get-veicle-service-details.dto';
 import { ServiceRecordResponseDto } from './dto/gte-live-vehicle-status.dto';
@@ -132,6 +133,65 @@ export class VehicleServiceAdminService {
       if (error instanceof Error) {
         this.logger.error(
           `Error fetching upcoming service details: ${error.message}`,
+          error.stack,
+        );
+      }
+      throw error;
+    }
+  }
+
+  async addCostDetails(body: AddCostReqBodyDto, currentUser: string) {
+    try {
+      const items = Array.isArray(body.items) ? body.items : [body.items];
+
+      const values: string[] = [];
+      const params: any[] = [];
+      let idx = 1;
+
+      for (const item of items) {
+        if (!item) continue;
+
+        values.push(
+          `($${idx++}, $${idx++}, $${idx++}, $${idx++}, $${idx++}, $${idx++}, $${idx++}, $${idx++}, $${idx++}, $${idx++})`,
+        );
+        params.push(
+          body.service_record_id,
+          item.spare_part_id || null,
+          item.item_name,
+          item.type,
+          item.quantity,
+          item.unit_price,
+          item.total_price,
+          item.note || null,
+          currentUser,
+          currentUser,
+        );
+      }
+
+      if (values.length === 0) return [];
+
+      const query = `
+        INSERT INTO t_service_item (
+          service_record_id, 
+          spare_part_id, 
+          item_name, 
+          type, 
+          quantity, 
+          unit_price, 
+          total_price, 
+          note, 
+          created_by, 
+          updated_by
+        ) VALUES ${values.join(', ')}
+        RETURNING id;
+      `;
+
+      const rows = await this.db.query(query, params);
+      return rows;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(
+          `Error adding cost details: ${error.message}`,
           error.stack,
         );
       }

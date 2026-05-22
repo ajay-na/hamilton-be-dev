@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PaginationQueryDto } from '../../common/dto/pagination-params.dto';
 import { DatabaseService } from '../../database/database.service';
 import { WinstonLoggerService } from '../../logger/logger.service';
 import { GetVehicleByBrandSuccessDTO } from '../vehicle/dto/get-vehicle-by-brand-id.dto';
@@ -8,6 +7,7 @@ import {
   BrandDetailResponseDto,
 } from './dto/brand-details.dto';
 import { GetAllBrandDto } from './dto/brand-list.dto';
+import { GetAllBrandQueryDTO } from './dto/get-all-brand-query.dto';
 import { SearchBrandByNameDto } from './dto/search-brand-by-name.dto';
 import { getAllBrandsQuery } from './query/get-all-brands.query';
 import { getBrandDetailsByIdQuery } from './query/get-brand-details.query';
@@ -24,11 +24,11 @@ export class BrandService {
     }
   }
 
-  async getAllBrands(params: PaginationQueryDto): Promise<GetAllBrandDto> {
+  async getAllBrands(params: GetAllBrandQueryDTO): Promise<GetAllBrandDto> {
     try {
-      const { offset, limit } = params;
+      const { offset, limit, type } = params;
       const data = await this.db.query<BrandDetailResponseDBDto>(
-        getAllBrandsQuery,
+        getAllBrandsQuery(type),
         [limit, offset],
       );
       const totalItems =

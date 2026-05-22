@@ -17,6 +17,7 @@ import { RolesGuard } from '../../../auth/guards/roles.guard';
 import { ApiPaginatedResponse } from '../../../common/decorators/api-response.decorator';
 import { DateParamDto } from '../../../common/dto/date-param.dto';
 import { IdParamsDto } from '../../../common/dto/user-params.dto';
+import { AddCostReqBodyDto } from './dto/add-cost-for-service.dto';
 import { UpcomingServiceResponseDto } from './dto/get-upcoming-service-details-respononse.dto';
 import { ServiceTicketDto } from './dto/get-veicle-service-details.dto';
 import { ServiceRecordResponseDto } from './dto/gte-live-vehicle-status.dto';
@@ -82,5 +83,17 @@ export class VehicleServiceAdminController {
       body,
       user.id,
     );
+  }
+
+  @Post('add-cost')
+  @ApiOperation({
+    summary:
+      'Add cost for vehicle service and insert into spare part and service history',
+  })
+  async addCost(
+    @Body() body: AddCostReqBodyDto,
+    @CurrentUser() user: CurrentuserDto,
+  ): Promise<any> {
+    return this.vehicleServiceAdminService.addCostDetails(body, user.id);
   }
 }

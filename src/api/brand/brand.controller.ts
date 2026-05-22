@@ -5,12 +5,12 @@ import { Role } from '../../auth/enums/role.enum';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { ApiPaginatedResponse } from '../../common/decorators/api-response.decorator';
-import { PaginationQueryDto } from '../../common/dto/pagination-params.dto';
 import { IdParamsDto } from '../../common/dto/user-params.dto';
 import { GetVehicleByBrandSuccessDTO } from '../vehicle/dto/get-vehicle-by-brand-id.dto';
 import { BrandService } from './brand.service';
 import { BrandDetailResponseDto } from './dto/brand-details.dto';
 import { GetAllBrandDto } from './dto/brand-list.dto';
+import { GetAllBrandQueryDTO } from './dto/get-all-brand-query.dto';
 import { SearchBrandByNameDto } from './dto/search-brand-by-name.dto';
 
 @ApiTags('Brands')
@@ -25,7 +25,7 @@ export class BrandController {
   @Roles(Role.ADMIN, Role.STAFF)
   @Get()
   async getAllBrand(
-    @Query() params: PaginationQueryDto,
+    @Query() params: GetAllBrandQueryDTO,
   ): Promise<GetAllBrandDto> {
     return this.brandService.getAllBrands(params);
   }
