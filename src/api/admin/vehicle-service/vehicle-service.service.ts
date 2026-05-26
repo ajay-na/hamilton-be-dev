@@ -2,12 +2,17 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { IdParamsDto } from 'src/common/dto/user-params.dto';
 import { DatabaseService } from '../../../database/database.service';
 import { WinstonLoggerService } from '../../../logger/logger.service';
+import { AddCostReqBodyDto } from './dto/add-cost-for-service.dto';
 import { UpcomingServiceResponseDto } from './dto/get-upcoming-service-details-respononse.dto';
-import { ServiceTicketDto } from './dto/get-veicle-service-details.dto';
+import { ServiceRecordDetailResponseDto } from './dto/get-veicle-service-details.dto';
 import { ServiceRecordResponseDto } from './dto/gte-live-vehicle-status.dto';
 import { InitiateServiceReqBodyDto } from './dto/initiate-service-req-body.dto';
 import { UpdateServiceStatusReqBodyDto } from './dto/update-service-status-req-body.dto';
-import { addServiceHistoryQuery } from './query/change-service-status.query';
+import {
+  addServiceCompletedQuery,
+  addServiceHistoryQuery,
+} from './query/change-service-status.query';
+import { getCompletedServiceDetailsQuery } from './query/get-completed-services.query';
 import { getLiveServiceDetailsQuery } from './query/get-live-service-details.query';
 import { getUpcomingServiceDetailsQuery } from './query/get-upcoming-service-details.query';
 import { getServiceDetailsQuery } from './query/getServiceDetails.query';
@@ -24,9 +29,11 @@ export class VehicleServiceAdminService {
     }
   }
 
-  async getVehicleServiceStatus(id: string): Promise<ServiceTicketDto> {
+  async getVehicleServiceStatus(
+    id: string,
+  ): Promise<ServiceRecordDetailResponseDto> {
     try {
-      const [data] = await this.db.query<ServiceTicketDto>(
+      const [data] = await this.db.query<ServiceRecordDetailResponseDto>(
         getServiceDetailsQuery,
         [id],
       );
@@ -59,6 +66,7 @@ export class VehicleServiceAdminService {
           body.note,
           currentUser,
           body.remarks,
+          body.service_in_time,
         ],
       );
       return data;
@@ -78,7 +86,12 @@ export class VehicleServiceAdminService {
     currentUser: string,
   ): Promise<IdParamsDto> {
     try {
-      const [data] = await this.db.query<IdParamsDto>(addServiceHistoryQuery, [
+      let query =
+        body?.status === 'WORK_COMPLETED'
+          ? addServiceCompletedQuery
+          : addServiceHistoryQuery;
+
+      const [data] = await this.db.query<IdParamsDto>(query, [
         body.service_record_id,
         body.status,
         body.remarks,
@@ -132,6 +145,85 @@ export class VehicleServiceAdminService {
       if (error instanceof Error) {
         this.logger.error(
           `Error fetching upcoming service details: ${error.message}`,
+          error.stack,
+        );
+      }
+      throw error;
+    }
+  }
+
+  async getCompletedServiceDetails(
+    date: string,
+  ): Promise<ServiceRecordResponseDto[]> {
+    try {
+      const data = await this.db.query<ServiceRecordResponseDto>(
+        getCompletedServiceDetailsQuery,
+        [date],
+      );
+      return data;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(
+          `Error fetching completed service details: ${error.message}`,
+          error.stack,
+        );
+      }
+      throw error;
+    }
+  }
+
+  async addCostDetails(body: AddCostReqBodyDto, currentUser: string) {
+    try {
+      const items = Array.isArray(body.items) ? body.items : [body.items];
+
+      const values: string[] = [];
+      const params: any[] = [];
+      let idx = 1;
+
+      for (const item of items) {
+        if (!item) continue;
+
+        values.push(
+          `($${idx++}, $${idx++}, $${idx++}, $${idx++}, $${idx++}, $${idx++}, $${idx++}, $${idx++}, $${idx++}, $${idx++})`,
+        );
+        params.push(
+          body.service_record_id,
+          item.spare_part_id || null,
+          item.item_name,
+          item.type,
+          item.quantity || 1,
+          item.unit_price,
+          item.total_price,
+          item.note || null,
+          currentUser,
+          currentUser,
+        );
+      }
+
+      if (values.length === 0) return [];
+
+      const query = `
+        INSERT INTO t_service_item (
+          service_record_id, 
+          spare_part_id, 
+          item_name, 
+          type, 
+          quantity, 
+          unit_price, 
+          total_price, 
+          note, 
+          created_by, 
+          updated_by
+        ) VALUES ${values.join(', ')}
+        RETURNING id;
+      `;
+
+      const rows = await this.db.query(query, params);
+      return rows;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(
+          `Error adding cost details: ${error.message}`,
           error.stack,
         );
       }

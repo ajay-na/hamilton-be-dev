@@ -38,8 +38,9 @@ class BrandDto {
 }
 
 export class GetAllBrandDto {
-  @ApiProperty({ example: BrandDto, isArray: true })
+  @ApiProperty({ type: BrandDto, isArray: true })
   brand!: BrandDto[];
-  @ApiProperty({ example: 10 })
+
+  @ApiProperty({ type: PaginationMetaDto })
   pagination!: PaginationMetaDto;
 }

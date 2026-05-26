@@ -10,7 +10,8 @@ export const insertServiceDetailsInitialQuery = `WITH inserted_service AS (
     service_status, 
     payment_status, 
     created_by, 
-    updated_by
+    updated_by,
+    service_in_time
   ) 
   VALUES ( 
     $1, 
@@ -23,7 +24,8 @@ export const insertServiceDetailsInitialQuery = `WITH inserted_service AS (
     'in_progress', 
     'pending',   
     $8, 
-    $8
+    $8,
+    $10
   )
   RETURNING id, service_status
 )
@@ -35,8 +37,8 @@ INSERT INTO t_service_history (
 )
 SELECT 
   id, 
-  $9, -- remarks (Text or NULL)
-  $8, -- current_user_id
-  $8  -- current_user_id
+  $9,
+  $8,
+  $8 
 FROM inserted_service RETURNING t_service_history.id;
 `;

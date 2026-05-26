@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -62,4 +63,13 @@ export class InitiateServiceReqBodyDto {
   @IsString()
   @IsOptional()
   remarks: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    format: 'date-time',
+    example: '2026-05-26T12:00:00.000Z',
+  })
+  @IsDateString()
+  @IsOptional()
+  service_in_time?: string;
 }

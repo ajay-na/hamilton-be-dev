@@ -1,119 +1,114 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-class VehicleDto {
-  @ApiProperty({
-    example: '3828650b-ce35-4a1c-b85a-d7d11ce64c57',
-    description: 'Unique identifier of the vehicle',
-  })
+class VehicleDetailsDto {
+  @ApiProperty({ example: '3828650b-ce35-4a1c-b85a-d7d11ce64c57' })
   id: string;
 
   @ApiProperty({
     example: null,
     nullable: true,
-    description: 'Custom name or model given to the vehicle',
+    description: 'Model or display name of the vehicle',
   })
   name: string | null;
 
-  @ApiProperty({
-    example: 10001,
-    description: 'Odometer reading of the vehicle',
-  })
+  @ApiProperty({ example: 10001 })
   odo_reading: number;
 
-  @ApiProperty({ example: 'KL-08Masd', description: 'License plate number' })
+  @ApiProperty({ example: 'KL-08Masd' })
   license_plate: string;
 }
 
-class UserDto {
-  @ApiProperty({
-    example: '02301bd5-ccfa-4fe5-b65c-3bee16a87962',
-    description: 'Unique identifier of the user',
-  })
+class UserDetailsDto {
+  @ApiProperty({ example: '02301bd5-ccfa-4fe5-b65c-3bee16a87962' })
   id: string;
 
-  @ApiProperty({ example: 'Ajay', description: 'First name of the user' })
+  @ApiProperty({ example: 'Ajay' })
   fname: string;
 
-  @ApiProperty({ example: '', description: 'Last name of the user' })
+  @ApiProperty({ example: '' })
   lname: string;
 }
 
-class ServiceHistoryDto {
-  @ApiProperty({
-    example: '657246d0-c559-4d4a-b1ec-ede55a0c762d',
-    description: 'Unique identifier of the history record',
-  })
+class ServiceTimelineDto {
+  @ApiProperty({ example: '657246d0-c559-4d4a-b1ec-ede55a0c762d' })
   id: string;
 
-  @ApiProperty({
-    example: 'VEHICLE_ARRIVED',
-    description: 'Current status workflow step',
-  })
+  @ApiProperty({ example: 'VEHICLE_ARRIVED' })
   status: string;
 
-  @ApiProperty({
-    example: 'scratches over left fendor',
-    nullable: true,
-    description: 'Additional inspection notes or remarks',
-  })
+  @ApiProperty({ example: 'scratches over left fendor', nullable: true })
   remarks: string | null;
 
-  @ApiProperty({
-    example: '2026-05-16T12:11:13.428652+05:30',
-    description: 'Record creation timestamp',
-  })
+  @ApiProperty({ example: '2026-05-16T12:11:13.428652+05:30' })
   created_at: string;
 
-  @ApiProperty({
-    example: '2026-05-16T12:11:13.428652+05:30',
-    description: 'Record update timestamp',
-  })
+  @ApiProperty({ example: '2026-05-16T12:11:13.428652+05:30' })
   updated_at: string;
 }
 
-export class ServiceTicketDto {
+class ServiceLineItemDto {
+  @ApiProperty({ example: '6dc3586c-d617-42c4-a4f3-b2b5e9c83fc0' })
+  id: string;
+
+  @ApiProperty({ example: null, nullable: true })
+  note: string | null;
+
+  @ApiProperty({
+    example: 'part',
+    description: 'Item type: e.g., part or labor',
+  })
+  type: string;
+
+  @ApiProperty({ example: 1 })
+  quantity: number;
+
+  @ApiProperty({ example: 'labour charge' })
+  item_name: string;
+
+  @ApiProperty({ example: 100 })
+  unit_price: number;
+
+  @ApiProperty({ example: 100 })
+  total_price: number;
+}
+
+export class ServiceRecordDetailResponseDto {
   @ApiProperty({
     example: 'e0eedfd4-5329-48fa-bea7-8d3e24c55870',
-    description: 'Unique identifier of the main service ticket',
+    description: 'Service Record ID',
   })
   id: string;
 
-  @ApiProperty({
-    type: () => VehicleDto,
-    description: 'Associated vehicle details',
-  })
-  vehicle: VehicleDto;
+  @ApiProperty({ type: () => VehicleDetailsDto })
+  vehicle: VehicleDetailsDto;
 
-  @ApiProperty({
-    type: () => UserDto,
-    description: 'Associated customer/user details',
-  })
-  user: UserDto;
+  @ApiProperty({ type: () => UserDetailsDto })
+  user: UserDetailsDto;
 
   @ApiProperty({
     example: null,
     nullable: true,
-    description: 'Assigned service advisor',
+    description: 'Assigned service advisor details',
   })
-  advisor: string | null;
+  advisor: any | null;
 
   @ApiProperty({
     example: null,
     nullable: true,
-    description: 'Assigned technician',
+    description: 'Assigned technician details',
   })
-  technician: string | null;
+  technician: any | null;
 
   @ApiProperty({
     example: null,
     nullable: true,
-    description: 'Overall ticket odometer reading override',
+    description: 'Odometer reading at job opening',
   })
   odo_reading: number | null;
 
-  @ApiProperty({
-    type: [ServiceHistoryDto],
-    description: 'List of timeline events and status updates',
-  })
-  service_history: ServiceHistoryDto[];
+  @ApiProperty({ type: () => [ServiceTimelineDto] })
+  service_history: ServiceTimelineDto[];
+
+  @ApiProperty({ type: () => [ServiceLineItemDto] })
+  service_items: ServiceLineItemDto[];
 }

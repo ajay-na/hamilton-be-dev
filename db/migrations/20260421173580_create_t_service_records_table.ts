@@ -6,6 +6,7 @@ const SERVICE_STATUSES = [
   'in_progress',
   'completed',
   'cancelled',
+  'service_completed',
 ];
 const PAYMENT_STATUSES = ['pending', 'paid', 'partially_paid', 'refunded'];
 

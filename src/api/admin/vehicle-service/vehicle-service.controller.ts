@@ -17,8 +17,9 @@ import { RolesGuard } from '../../../auth/guards/roles.guard';
 import { ApiPaginatedResponse } from '../../../common/decorators/api-response.decorator';
 import { DateParamDto } from '../../../common/dto/date-param.dto';
 import { IdParamsDto } from '../../../common/dto/user-params.dto';
+import { AddCostReqBodyDto } from './dto/add-cost-for-service.dto';
 import { UpcomingServiceResponseDto } from './dto/get-upcoming-service-details-respononse.dto';
-import { ServiceTicketDto } from './dto/get-veicle-service-details.dto';
+import { ServiceRecordDetailResponseDto } from './dto/get-veicle-service-details.dto';
 import { ServiceRecordResponseDto } from './dto/gte-live-vehicle-status.dto';
 import { InitiateServiceReqBodyDto } from './dto/initiate-service-req-body.dto';
 import { UpdateServiceStatusReqBodyDto } from './dto/update-service-status-req-body.dto';
@@ -52,12 +53,23 @@ export class VehicleServiceAdminController {
     );
   }
 
+  @Get('completed')
+  @ApiOperation({ summary: 'Get completed service details' })
+  @ApiPaginatedResponse(ServiceRecordResponseDto, true)
+  async getCompletedServiceDetails(
+    @Query() param: DateParamDto,
+  ): Promise<ServiceRecordResponseDto[]> {
+    return this.vehicleServiceAdminService.getCompletedServiceDetails(
+      param.date,
+    );
+  }
+
   @ApiOperation({ summary: 'Get vehicle service status' })
-  @ApiPaginatedResponse(ServiceTicketDto)
+  @ApiPaginatedResponse(ServiceRecordDetailResponseDto)
   @Get('details/:id')
   async getVehicleServiceStatus(
     @Param() param: IdParamsDto,
-  ): Promise<ServiceTicketDto> {
+  ): Promise<ServiceRecordDetailResponseDto> {
     return this.vehicleServiceAdminService.getVehicleServiceStatus(param.id);
   }
 
@@ -82,5 +94,17 @@ export class VehicleServiceAdminController {
       body,
       user.id,
     );
+  }
+
+  @Post('add-cost')
+  @ApiOperation({
+    summary:
+      'Add cost for vehicle service and insert into spare part and service history',
+  })
+  async addCost(
+    @Body() body: AddCostReqBodyDto,
+    @CurrentUser() user: CurrentuserDto,
+  ): Promise<any> {
+    return this.vehicleServiceAdminService.addCostDetails(body, user.id);
   }
 }

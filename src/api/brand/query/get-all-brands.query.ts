@@ -1,4 +1,4 @@
-export const getAllBrandsQuery = `SELECT 
+export const getAllBrandsQuery = (type: string) => `SELECT 
     mb.id,
     mb.name,
     mb.short_form,
@@ -10,9 +10,10 @@ export const getAllBrandsQuery = `SELECT
     mb.created_at,
     mb.updated_at,
     mb.is_active,
-    COUNT(*) OVER() AS total_count
+    COUNT(mb.id) OVER() AS total_count
 FROM m_brand mb 
 LEFT JOIN t_user tu ON mb.created_by = tu.id 
-LEFT JOIN t_user tu1 ON mb.updated_by = tu1.id  
+LEFT JOIN t_user tu1 ON mb.updated_by = tu1.id 
+${type ? `WHERE mb.type = '${type}'` : ''} 
 ORDER BY mb.created_at DESC
 LIMIT $1 OFFSET $2;`;
