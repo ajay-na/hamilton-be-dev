@@ -3,6 +3,7 @@ import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
   IsEnum,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
@@ -10,7 +11,7 @@ import {
 } from 'class-validator';
 
 export enum ServiceItemType {
-  LABOR = 'labor',
+  LABOUR = 'labour',
   PART = 'part',
 }
 
@@ -28,17 +29,20 @@ export class ServiceItemDto {
   @IsEnum(ServiceItemType, { each: true })
   type: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsNumber()
-  quantity: number;
+  @IsOptional()
+  quantity?: number;
 
   @ApiProperty()
   @IsNumber()
+  @IsNotEmpty()
   unit_price: number;
 
   @ApiProperty()
   @IsNumber()
-  total_price: number;
+  @IsNotEmpty()
+  total_price?: number;
 
   @ApiPropertyOptional()
   @IsOptional()

@@ -1,12 +1,14 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ServiceTypeAdminModule } from './api/admin/admin-service-type/admin-service-type.module';
+import { InvoiceModule } from './api/admin/invoice/invoice.module';
 import { SlotsAdminModule } from './api/admin/slots/slots.module';
 import { UserAdminModule } from './api/admin/user/user.module';
 import { VehicleServiceAdminModule } from './api/admin/vehicle-service/vehicle-service.module';
 import { BrandModule } from './api/brand/brand.module';
 import { ServiceTypeModule } from './api/service-type/service-type.module';
 import { SlotsModule } from './api/slots/slot.module';
+import { SpareModule } from './api/spare/spare.module';
 import { UserModule } from './api/user/user.module';
 import { VehicleModule } from './api/vehicle/vehicle.module';
 import { AppController } from './app.controller';
@@ -36,6 +38,8 @@ import { LoggerModule } from './logger/logger.module';
     VehicleServiceAdminModule,
     ServiceTypeAdminModule,
     ServiceTypeModule,
+    InvoiceModule,
+    SpareModule,
   ],
   controllers: [AppController],
   providers: [],

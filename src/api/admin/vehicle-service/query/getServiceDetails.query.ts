@@ -25,7 +25,20 @@ coalesce(
     'updated_at',tsh.updated_at
     )) filter (where tsh.id is not null), 
     '[]'::jsonb
-  ) as service_history
+  ) as service_history,
+  (
+    SELECT COALESCE(jsonb_agg(jsonb_build_object(
+      'id', tsi.id,
+      'item_name', tsi.item_name,
+      'type', tsi."type",
+      'quantity', tsi.quantity,
+      'unit_price', tsi.unit_price,
+      'total_price', tsi.total_price,
+      'note', tsi.note
+    )), '[]'::jsonb)
+    FROM t_service_item tsi
+    WHERE tsi.service_record_id = tsr.id
+  ) AS service_items
 from t_service_record tsr 
 left join t_user_vehicle tuv on tsr.t_vehicle_id = tuv.id and tuv.is_active = true
 left join t_user tu on tsr.t_user_id = tu.id and tu.is_active = true
