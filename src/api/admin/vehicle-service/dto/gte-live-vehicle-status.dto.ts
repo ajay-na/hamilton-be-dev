@@ -104,6 +104,12 @@ export class ServiceRecordResponseDto {
   id: string;
 
   @ApiProperty({
+    example: false,
+    description: 'The invoice generated status',
+  })
+  is_invoice_generated: boolean;
+
+  @ApiProperty({
     type: () => VehicleDto,
     description: 'Details of the vehicle tied to the service',
   })

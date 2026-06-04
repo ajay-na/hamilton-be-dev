@@ -59,6 +59,7 @@ export async function up(knex: Knex): Promise<void> {
     table.decimal('total_labor_cost', 10, 2).defaultTo(0);
     table.decimal('grand_total', 10, 2).defaultTo(0);
     table.decimal('discount', 10, 2).defaultTo(0);
+    table.boolean('is_invoice_generated').defaultTo(false);
     table
       .uuid('created_by')
       .references('id')

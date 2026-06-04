@@ -1,4 +1,83 @@
-import { Injectable } from '@nestjs/common';
-
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import * as fs from 'fs';
+import * as handlebars from 'handlebars';
+import path from 'node:path';
+import * as puppeteer from 'puppeteer';
+import { DatabaseService } from '../../../database/database.service';
+import { WinstonLoggerService } from '../../../logger/logger.service';
+import { generateInvoiceDataQuery } from './query/generate-data-for-invoice.query';
 @Injectable()
-export class InvoiceService {}
+export class InvoiceService {
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly logger: WinstonLoggerService,
+  ) {
+    if (typeof this.logger.setContext === 'function') {
+      this.logger.setContext(InvoiceService.name);
+    }
+  }
+
+  async generateInvoice(id: string) {
+    try {
+      return 'hi';
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(
+          `Generating invoice Error: ${error.message}`,
+          error.stack,
+        );
+      } else {
+        this.logger.error('An unknown error occurred in generating invoice');
+      }
+      throw error;
+    }
+  }
+
+  async generateInvoicePdf(id: any): Promise<Buffer> {
+    try {
+      if (!handlebars.helpers['addOne']) {
+        handlebars.registerHelper('addOne', (value: number) => {
+          return value + 1;
+        });
+      }
+      const [data] =await this.db.query(generateInvoiceDataQuery,[id])
+      const templatePath = path.resolve(
+        process.cwd(),
+        'src/templates/invoice.hbs',
+      );
+      const templateHtml = fs.readFileSync(templatePath, 'utf8');
+      const compiledTemplate = handlebars.compile(templateHtml);
+      const finalHtml = compiledTemplate(data);
+
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'], 
+      });
+
+      const page = await browser.newPage();
+
+      await page.setContent(finalHtml, { waitUntil: 'domcontentloaded' });
+
+      const pdfBuffer = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '20px',
+          bottom: '20px',
+          left: '20px',
+          right: '20px',
+        },
+      });
+
+      await browser.close();
+      return Buffer.from(pdfBuffer);
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      throw new InternalServerErrorException(
+        'Error generating PDF invoice',
+        errorMessage,
+      );
+    }
+  }
+}

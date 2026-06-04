@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 
-const ITEM_TYPES = ['labor', 'part'];
+const ITEM_TYPES = ['labour', 'part'];
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('t_service_item', (table) => {

@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -18,10 +20,12 @@ import { ApiPaginatedResponse } from '../../../common/decorators/api-response.de
 import { DateParamDto } from '../../../common/dto/date-param.dto';
 import { IdParamsDto } from '../../../common/dto/user-params.dto';
 import { AddCostReqBodyDto } from './dto/add-cost-for-service.dto';
+import { GetCompletedServiceQueryDto } from './dto/get-completed-service-param.dto';
 import { UpcomingServiceResponseDto } from './dto/get-upcoming-service-details-respononse.dto';
 import { ServiceRecordDetailResponseDto } from './dto/get-veicle-service-details.dto';
 import { ServiceRecordResponseDto } from './dto/gte-live-vehicle-status.dto';
 import { InitiateServiceReqBodyDto } from './dto/initiate-service-req-body.dto';
+import { UpdateCostReqBodyDto } from './dto/update-cost-for-service.dto';
 import { UpdateServiceStatusReqBodyDto } from './dto/update-service-status-req-body.dto';
 import { VehicleServiceAdminService } from './vehicle-service.service';
 
@@ -57,11 +61,9 @@ export class VehicleServiceAdminController {
   @ApiOperation({ summary: 'Get completed service details' })
   @ApiPaginatedResponse(ServiceRecordResponseDto, true)
   async getCompletedServiceDetails(
-    @Query() param: DateParamDto,
+    @Query() param: GetCompletedServiceQueryDto,
   ): Promise<ServiceRecordResponseDto[]> {
-    return this.vehicleServiceAdminService.getCompletedServiceDetails(
-      param.date,
-    );
+    return this.vehicleServiceAdminService.getCompletedServiceDetails(param);
   }
 
   @ApiOperation({ summary: 'Get vehicle service status' })
@@ -106,5 +108,29 @@ export class VehicleServiceAdminController {
     @CurrentUser() user: CurrentuserDto,
   ): Promise<any> {
     return this.vehicleServiceAdminService.addCostDetails(body, user.id);
+  }
+
+  @Patch('item/:id')
+  @ApiOperation({
+    summary: 'Update cost details for vehicle service',
+  })
+  async updateCost(
+    @Param() param: IdParamsDto,
+    @Body() body: UpdateCostReqBodyDto,
+    @CurrentUser() user: CurrentuserDto,
+  ): Promise<IdParamsDto> {
+    return this.vehicleServiceAdminService.updateCostDetails(
+      param.id,
+      body,
+      user.id,
+    );
+  }
+
+  @Delete('item/:id')
+  @ApiOperation({
+    summary: 'Delete cost details from vehicle service',
+  })
+  async deleteCost(@Param() param: IdParamsDto): Promise<IdParamsDto> {
+    return this.vehicleServiceAdminService.deleteCostDetails(param.id);
   }
 }

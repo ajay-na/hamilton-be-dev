@@ -3,20 +3,24 @@ import { IdParamsDto } from 'src/common/dto/user-params.dto';
 import { DatabaseService } from '../../../database/database.service';
 import { WinstonLoggerService } from '../../../logger/logger.service';
 import { AddCostReqBodyDto } from './dto/add-cost-for-service.dto';
+import { GetCompletedServiceQueryDto } from './dto/get-completed-service-param.dto';
 import { UpcomingServiceResponseDto } from './dto/get-upcoming-service-details-respononse.dto';
 import { ServiceRecordDetailResponseDto } from './dto/get-veicle-service-details.dto';
 import { ServiceRecordResponseDto } from './dto/gte-live-vehicle-status.dto';
 import { InitiateServiceReqBodyDto } from './dto/initiate-service-req-body.dto';
+import { UpdateCostReqBodyDto } from './dto/update-cost-for-service.dto';
 import { UpdateServiceStatusReqBodyDto } from './dto/update-service-status-req-body.dto';
 import {
   addServiceCompletedQuery,
   addServiceHistoryQuery,
 } from './query/change-service-status.query';
 import { getCompletedServiceDetailsQuery } from './query/get-completed-services.query';
+import { getDeleteInvoiceItemDetailsQuery } from './query/get-delete-item-cost.query';
 import { getLiveServiceDetailsQuery } from './query/get-live-service-details.query';
+import { getServiceDetailsQuery } from './query/get-service-details.query';
 import { getUpcomingServiceDetailsQuery } from './query/get-upcoming-service-details.query';
-import { getServiceDetailsQuery } from './query/getServiceDetails.query';
 import { insertServiceDetailsInitialQuery } from './query/insert-service-details.query';
+import { getCostUpdateQuery } from './query/update-cost-details.query';
 
 @Injectable()
 export class VehicleServiceAdminService {
@@ -153,12 +157,13 @@ export class VehicleServiceAdminService {
   }
 
   async getCompletedServiceDetails(
-    date: string,
+    param: GetCompletedServiceQueryDto,
   ): Promise<ServiceRecordResponseDto[]> {
     try {
+      const query = getCompletedServiceDetailsQuery(param.isInvoiceGenerated);
       const data = await this.db.query<ServiceRecordResponseDto>(
-        getCompletedServiceDetailsQuery,
-        [date],
+        getCompletedServiceDetailsQuery(param.isInvoiceGenerated),
+        [param.date],
       );
       return data;
     } catch (error: unknown) {
@@ -224,6 +229,43 @@ export class VehicleServiceAdminService {
       if (error instanceof Error) {
         this.logger.error(
           `Error adding cost details: ${error.message}`,
+          error.stack,
+        );
+      }
+      throw error;
+    }
+  }
+
+  async updateCostDetails(
+    itemId: string,
+    body: UpdateCostReqBodyDto,
+    currentUser: string,
+  ): Promise<IdParamsDto> {
+    try {
+      const { query, values } = getCostUpdateQuery(body, currentUser, itemId);
+      const [rows] = await this.db.query(query, values);
+      return rows;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(
+          `Error updating cost details: ${error.message}`,
+          error.stack,
+        );
+      }
+      throw error;
+    }
+  }
+
+  async deleteCostDetails(itemId: string): Promise<IdParamsDto> {
+    try {
+      const [rows] = await this.db.query(getDeleteInvoiceItemDetailsQuery, [
+        itemId,
+      ]);
+      return rows;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(
+          `Error deleting cost details: ${error.message}`,
           error.stack,
         );
       }
