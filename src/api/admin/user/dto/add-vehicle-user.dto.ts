@@ -21,8 +21,8 @@ export class CreateUserVehicleDto {
     description: 'The master vehicle ID from the m_vehicle table',
   })
   @IsUUID()
-  @IsNotEmpty()
-  vehicle_id!: string;
+  @IsOptional()
+  vehicle_id?: string;
 
   @ApiProperty({ example: 'KL-07-AB-1234' })
   @IsString()
