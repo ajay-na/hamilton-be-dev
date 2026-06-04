@@ -2,9 +2,13 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as handlebars from 'handlebars';
 import path from 'node:path';
+import { IdParamsDto } from 'src/common/dto/user-params.dto';
 import { DatabaseService } from '../../../database/database.service';
 import { WinstonLoggerService } from '../../../logger/logger.service';
+import { ServiceRecordResponseDto } from './dto/get-invoice-data.response.dto';
 import { generateInvoiceDataQuery } from './query/generate-data-for-invoice.query';
+import { getInvoiceDataQuery } from './query/get-invoice-data.query';
+import { generateInvoiceAndUpdateAbcQuery } from './query/insert-data-denormalised-table.query';
 @Injectable()
 export class InvoiceService {
   constructor(
@@ -16,9 +20,13 @@ export class InvoiceService {
     }
   }
 
-  async generateInvoice(id: string) {
+  async generateInvoice(id: string, userId: string): Promise<IdParamsDto> {
     try {
-      return 'hi';
+      const [data] = await this.db.query<IdParamsDto>(
+        generateInvoiceAndUpdateAbcQuery,
+        [id, userId],
+      );
+      return data;
     } catch (error: unknown) {
       if (error instanceof Error) {
         this.logger.error(
@@ -78,6 +86,23 @@ export class InvoiceService {
         error instanceof Error ? error.message : 'Unknown error';
       throw new InternalServerErrorException(
         'Error generating PDF invoice',
+        errorMessage,
+      );
+    }
+  }
+
+  async getInvoiceData(id: string): Promise<ServiceRecordResponseDto> {
+    try {
+      const [data] = await this.db.query<ServiceRecordResponseDto>(
+        getInvoiceDataQuery,
+        [id],
+      );
+      return data;
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      throw new InternalServerErrorException(
+        'Error gettin invoice data',
         errorMessage,
       );
     }
