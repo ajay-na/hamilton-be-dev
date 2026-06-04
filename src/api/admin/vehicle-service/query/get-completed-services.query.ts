@@ -1,6 +1,10 @@
-export const getCompletedServiceDetailsQuery = `SELECT 
+export const getCompletedServiceDetailsQuery = (
+  isInvoiceGenerated: boolean,
+) => {
+  return `SELECT 
   tsb.id, 
   tsb.booking_date::date::text AS booking_date, 
+  tsr.is_invoice_generated,
   json_build_object(
     'id', ms.id, 
     'slot_timing', ms.slot_timing 
@@ -49,5 +53,9 @@ LEFT JOIN m_slots ms ON tsb.slot_id = ms.id AND ms.is_active = true
 LEFT JOIN t_user tu ON tsb.user_id = tu.id
 LEFT JOIN t_user_vehicle tuv ON tsb.vehicle_id = tuv.id
 WHERE 
-  tsr.service_in_time >= $1::date AND tsr.service_in_time < ($1::date + INTERVAL '1 day')
+  tsr.service_in_time::date >= $1::date 
+  OR tsr.service_in_time::date < ($1::date + INTERVAL '1 day')
+  AND tsr.is_invoice_generated =
+  ${isInvoiceGenerated ? 'TRUE' : 'FALSE'}
   AND tsr.service_status IN ('completed', 'service_completed');`;
+};
