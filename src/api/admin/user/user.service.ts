@@ -127,14 +127,13 @@ export class UserService {
   ): Promise<null> {
     try {
       await this.db.query<UserVehicleResponseDto>(addUserVehicleQuery, [
-        body.name,
-        body.note,
-        body.license_plate,
-        body.manufactured_year,
-        body.odo_reading,
+        body.name || null,
+        body.note || null,
+        body.license_plate || null,
+        body.odo_reading || null,
+        body.manufactured_year || null,
         body.vehicle_id,
         customerId,
-        userId,
         userId,
       ]);
 
