@@ -2,7 +2,6 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as handlebars from 'handlebars';
 import path from 'node:path';
-import * as puppeteer from 'puppeteer';
 import { DatabaseService } from '../../../database/database.service';
 import { WinstonLoggerService } from '../../../logger/logger.service';
 import { generateInvoiceDataQuery } from './query/generate-data-for-invoice.query';
@@ -40,7 +39,7 @@ export class InvoiceService {
           return value + 1;
         });
       }
-      const [data] =await this.db.query(generateInvoiceDataQuery,[id])
+      const [data] = await this.db.query(generateInvoiceDataQuery, [id]);
       const templatePath = path.resolve(
         process.cwd(),
         'src/templates/invoice.hbs',
@@ -49,9 +48,12 @@ export class InvoiceService {
       const compiledTemplate = handlebars.compile(templateHtml);
       const finalHtml = compiledTemplate(data);
 
+      const puppeteer = await (eval('import("puppeteer")') as Promise<
+        typeof import('puppeteer')
+      >);
       const browser = await puppeteer.launch({
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'], 
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
       });
 
       const page = await browser.newPage();
