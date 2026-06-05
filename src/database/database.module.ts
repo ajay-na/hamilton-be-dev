@@ -23,11 +23,23 @@ import { DatabaseService } from './database.service';
 
         const pool = new Pool({
           ...dbConfig,
-          min: 5,
-          max:
-            configService.get<number>('config.database.maxConnections') || 50,
-          idleTimeoutMillis: 30000,
-          connectionTimeoutMillis: 2000,
+          // min: 5,
+          // max:
+          //   configService.get<number>('config.database.maxConnections') || 50,
+          // idleTimeoutMillis: 30000,
+          // connectionTimeoutMillis: 2000,
+
+          //these are specifically for vercel
+          min: 0,
+
+          // 2. Limit max connections per function instance to 1 or 2
+          max: 2,
+
+          // 3. Close idle connections almost immediately
+          idleTimeoutMillis: 1000,
+
+          // 4. Don't let functions hang waiting for a connection
+          connectionTimeoutMillis: 5000,
         });
 
         pool.on('error', (err: Error) => {
