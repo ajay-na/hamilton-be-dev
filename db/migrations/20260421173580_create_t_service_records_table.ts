@@ -51,7 +51,9 @@ export async function up(knex: Knex): Promise<void> {
       })
       .defaultTo('pending');
     table.specificType('slot_timing', 'TIMESTAMPTZ');
-    table.specificType('service_in_time', 'TIMESTAMPTZ');
+    table
+      .specificType('service_in_time', 'TIMESTAMPTZ')
+      .defaultTo(knex.fn.now());
     table.specificType('service_out_time', 'TIMESTAMPTZ');
     table.integer('odo_reading');
     table.text('note');
