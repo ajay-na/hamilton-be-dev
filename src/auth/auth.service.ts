@@ -10,7 +10,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { DatabaseService } from '../database/database.service';
 import { LoginBody } from './dto/login-body.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
-import { getUpsertUserQuery } from './query/get-user-upsert.query';
+import { getUpsertUserQuery } from './query/get-upsert-user.query';
 import { GoogleUser } from './strategies/google.strategy';
 
 interface UserEntity {
