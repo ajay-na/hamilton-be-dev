@@ -15,4 +15,5 @@ export default Joi.object({
   GOOGLE_CLIENT_SECRET: Joi.string().required(),
   CALLBACK_URL: Joi.string().required(),
   JWT_SECRET: Joi.string().required(),
+  FIREBASE_SERVICE_ACCOUNT: Joi.string().required(),
 });
