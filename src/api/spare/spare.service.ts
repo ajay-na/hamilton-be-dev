@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { IdParamsDto } from 'src/common/dto/user-params.dto';
+import { IdParamsDto } from '../../common/dto/user-params.dto';
 import { DatabaseService } from '../../database/database.service';
 import { WinstonLoggerService } from '../../logger/logger.service';
 import { CreateSpareDto } from './dto/create-spare.dto';

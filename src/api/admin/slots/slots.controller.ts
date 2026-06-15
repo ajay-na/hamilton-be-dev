@@ -9,9 +9,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { CurrentuserDto } from 'src/auth/dto/current-user.dto';
-import { ApiPaginatedResponse } from 'src/common/decorators/api-response.decorator';
+import { CurrentUser } from '../../../auth/decorators/current-user.decorator';
+import { CurrentuserDto } from '../../../auth/dto/current-user.dto';
+import { ApiPaginatedResponse } from '../../../common/decorators/api-response.decorator';
 import { Roles } from '../../../auth/decorators/roles.decorator';
 import { Role } from '../../../auth/enums/role.enum';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';

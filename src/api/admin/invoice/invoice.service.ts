@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as handlebars from 'handlebars';
 import path from 'node:path';
-import { IdParamsDto } from 'src/common/dto/user-params.dto';
+import { IdParamsDto } from '../../../common/dto/user-params.dto';
 import { DatabaseService } from '../../../database/database.service';
 import { WinstonLoggerService } from '../../../logger/logger.service';
 import { ServiceRecordResponseDto } from './dto/get-invoice-data.response.dto';
