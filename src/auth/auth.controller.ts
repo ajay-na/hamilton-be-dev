@@ -1,19 +1,35 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiPaginatedResponse } from 'src/common/decorators/api-response.decorator';
 import { AuthService } from './auth.service';
+import { LoginBody } from './dto/login-body.dto';
 import { GoogleLoginDto } from './dto/login-req.dto';
 import {
   AndroidGoogleLoginDto,
   LoginResponseDto,
 } from './dto/login-response.dto';
+import { FirebaseAuthGuard } from './guards/firebase-auth.guard';
 import { GoogleUser } from './strategies/google.strategy';
-import { LoginBody } from './dto/login-body.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @ApiOperation({
+    summary: 'Phone Login',
+    description:
+      'Verifies the phone number using Firebase Auth and returns a backend JWT access token for the user session.',
+  })
+  @ApiPaginatedResponse(LoginResponseDto)
+  @Post('phone-login')
+  @UseGuards(FirebaseAuthGuard)
+  async handlePhoneVerification(@Req() req: Request) {
+    const { phoneNumber } = req['user'];
+
+    return this.authService.handleOTPverification(phoneNumber);
+  }
 
   @ApiOperation({
     summary: 'Initiate Google OAuth2 Login',
