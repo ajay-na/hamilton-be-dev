@@ -1,0 +1,9 @@
+packages:
+  - '.'
+
+allowBuilds:
+  '@nestjs/core': true
+  '@scarf/scarf': true
+  'bcrypt': true
+  'puppeteer': true
+  'unrs-resolver': true
