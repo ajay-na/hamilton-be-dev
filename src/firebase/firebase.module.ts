@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { cert, getApps, initializeApp } from 'firebase-admin/app';
+import { cert, getApp, getApps, initializeApp } from 'firebase-admin/app';
 
 @Global()
 @Module({
@@ -7,6 +7,7 @@ import { cert, getApps, initializeApp } from 'firebase-admin/app';
     {
       provide: 'FIREBASE_ADMIN',
       useFactory: () => {
+        // 1. If no apps are initialized, set up the default app
         if (getApps().length === 0) {
           const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
 
@@ -16,13 +17,29 @@ import { cert, getApps, initializeApp } from 'firebase-admin/app';
             );
           }
 
-          const serviceAccount = JSON.parse(serviceAccountString);
+          try {
+            const serviceAccount = JSON.parse(serviceAccountString);
 
-          initializeApp({
-            credential: cert(serviceAccount),
-          });
+            // CRITICAL FOR VERCEL: Sanitize the private key newlines
+            if (serviceAccount.private_key) {
+              serviceAccount.private_key = serviceAccount.private_key.replace(
+                /\\n/g,
+                '\n',
+              );
+            }
+
+            // Return the initialized Firebase App instance
+            return initializeApp({
+              credential: cert(serviceAccount),
+            });
+          } catch (error) {
+            console.error('Firebase initialization failed:', error);
+            throw error;
+          }
         }
-        return null;
+
+        // 2. If already initialized (warm serverless container), return the existing app instance
+        return getApp();
       },
     },
   ],
