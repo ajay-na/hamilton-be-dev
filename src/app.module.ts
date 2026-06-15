@@ -16,6 +16,7 @@ import { AuthModule } from './auth/auth.module';
 import { HttpLoggerMiddleware } from './common/middleware/http-logger.middleware';
 import configuration from './config/configuration';
 import validationSchema from './config/validation';
+import { FirebaseModule } from './firebase/firebase.module';
 import { HealthModule } from './health/health.module';
 import { LoggerModule } from './logger/logger.module';
 
@@ -28,6 +29,7 @@ import { LoggerModule } from './logger/logger.module';
     }),
     LoggerModule,
     HealthModule,
+    FirebaseModule,
     AuthModule,
     UserModule,
     BrandModule,
