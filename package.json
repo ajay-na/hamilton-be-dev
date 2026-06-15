@@ -13,6 +13,7 @@
     ]
   },
   "scripts": {
+    "prepare": "node -e \"if (process.env.NODE_ENV !== 'production') { require('husky').install() }\"",
     "postinstall": "npx puppeteer browsers install chrome",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
