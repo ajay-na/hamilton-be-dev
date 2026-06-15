@@ -5,6 +5,12 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "protobufjs",
+      "@firebase/util"
+    ]
+  },
   "scripts": {
     "postinstall": "npx puppeteer browsers install chrome",
     "build": "nest build",
