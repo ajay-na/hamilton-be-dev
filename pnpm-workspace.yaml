@@ -1,0 +1,8 @@
+allowBuilds:
+  '@firebase/util': false
+  '@nestjs/core': false
+  '@scarf/scarf': false
+  bcrypt: false
+  protobufjs: false
+  puppeteer: false
+  unrs-resolver: false
