@@ -19,6 +19,7 @@ export class VehicleController {
     summary: 'Get all vehicles by brand id(for vehicle dropdown',
   })
   @ApiPaginatedResponse(GetVehicleByBrandSuccessDTO, true)
+  @UseGuards(JwtAuthGuard)
   @Get('list')
   async getAllVehiclesByBrandId(
     @Query() params: BrandIdDto,
