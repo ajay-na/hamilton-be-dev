@@ -2,12 +2,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../../database/database.service';
 import { WinstonLoggerService } from '../../logger/logger.service';
 import { CreateUserVehicleDto } from './dto/add-vehicle-user.dto';
+import { CreateBookingDto } from './dto/get-slot-booking-details.dto';
 import { UserVehicleResponseDto } from './dto/get-users-vehicle-response.dto';
 import { VehicleResponseDto } from './dto/get-vehicle-detail-by-id-response.dto';
+import { VehicleServiceDto } from './dto/service-history-dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserVehicleDto } from './dto/update-vehicle-user.dto';
 import { UserProfileResponseDto } from './dto/user-profile.dto';
 import { addUserVehicleQuery } from './query/add-user-vehicle.query';
+import { getUserServicehistoryQuery } from './query/get-service-history.query';
 import { getSlotsQuery } from './query/get-slot-timing.query';
 import { getUserBookingDetailsQuery } from './query/get-user-booking-details.query';
 import { getVehicleDetailsByIdQuery } from './query/get-vehicle-details-by-id.query';
@@ -15,7 +18,6 @@ import { getVehicleListByUserId } from './query/get-vehicle-list-by-user-id.quer
 import { userSoftDeleteQuery } from './query/user-soft-delete.query';
 import { userUpdateQuery } from './query/user-update.query';
 import { userVehicleUpdateQuery } from './query/user-vehicle-update.query';
-import { CreateBookingDto } from './dto/get-slot-booking-details.dto';
 
 @Injectable()
 export class UserService {
@@ -210,6 +212,23 @@ export class UserService {
     try {
       const data = await this.db.query<CreateBookingDto>(
         getUserBookingDetailsQuery,
+        [userId],
+      );
+      return data;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(`FindById Error: ${error.message}`, error.stack);
+      } else {
+        this.logger.error('An unknown error occurred in findById');
+      }
+      throw error;
+    }
+  }
+
+  async getUserServiceHistory(userId: string): Promise<VehicleServiceDto[]> {
+    try {
+      const data = await this.db.query<VehicleServiceDto>(
+        getUserServicehistoryQuery,
         [userId],
       );
       return data;
