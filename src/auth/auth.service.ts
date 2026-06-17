@@ -47,6 +47,8 @@ export class AuthService {
           email: user.email,
           role: user.role_id,
           name: user.firstname,
+          is_profile_completed: user.is_profile_completed,
+          is_vehicle_added: user.is_vehicle_added,
         }),
       };
     } catch (error) {
