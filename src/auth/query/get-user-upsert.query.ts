@@ -1,5 +1,5 @@
 export const getUpsertUserQuery = `with insert_data as (INSERT INTO t_user (mobile_no, role_id) 
-VALUES ('12345678901', 3)
+VALUES ($1, 3)
 ON CONFLICT (mobile_no) 
 DO UPDATE SET mobile_no = t_user.mobile_no
 RETURNING id,mobile_no, role_id, email, firstname)
