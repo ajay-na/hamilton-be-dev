@@ -19,4 +19,4 @@ left join t_user_vehicle tuv on tsb.vehicle_id = tuv.id
 where 
   tsb.user_id =$1 
   AND tsb.is_active = true 
-  AND tsb.booking_date>current_date;`;
+  AND tsb.booking_date>=current_date;`;
