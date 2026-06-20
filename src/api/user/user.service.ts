@@ -3,6 +3,7 @@ import { DatabaseService } from '../../database/database.service';
 import { WinstonLoggerService } from '../../logger/logger.service';
 import { CreateUserVehicleDto } from './dto/add-vehicle-user.dto';
 import { CreateBookingDto } from './dto/get-slot-booking-details.dto';
+import { ServiceRecordResponseDto } from './dto/get-user-live-booking-status.response.dto';
 import { UserVehicleResponseDto } from './dto/get-users-vehicle-response.dto';
 import { VehicleResponseDto } from './dto/get-vehicle-detail-by-id-response.dto';
 import { VehicleServiceDto } from './dto/service-history-dto';
@@ -13,6 +14,7 @@ import { addUserVehicleQuery } from './query/add-user-vehicle.query';
 import { getUserServicehistoryQuery } from './query/get-service-history.query';
 import { getSlotsQuery } from './query/get-slot-timing.query';
 import { getUserBookingDetailsQuery } from './query/get-user-booking-details.query';
+import { getUsersLiveServiceDetailsQuery } from './query/get-user-live-booking-status.query';
 import { getVehicleDetailsByIdQuery } from './query/get-vehicle-details-by-id.query';
 import { getVehicleListByUserId } from './query/get-vehicle-list-by-user-id.query';
 import { userSoftDeleteQuery } from './query/user-soft-delete.query';
@@ -229,6 +231,25 @@ export class UserService {
     try {
       const data = await this.db.query<VehicleServiceDto>(
         getUserServicehistoryQuery,
+        [userId],
+      );
+      return data;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(`FindById Error: ${error.message}`, error.stack);
+      } else {
+        this.logger.error('An unknown error occurred in findById');
+      }
+      throw error;
+    }
+  }
+
+  async getUserLiveBookingDetails(
+    userId: string,
+  ): Promise<ServiceRecordResponseDto[]> {
+    try {
+      const data = await this.db.query<ServiceRecordResponseDto>(
+        getUsersLiveServiceDetailsQuery,
         [userId],
       );
       return data;

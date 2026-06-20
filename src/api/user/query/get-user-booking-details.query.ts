@@ -1,22 +1,29 @@
-export const getUserBookingDetailsQuery = `select 
-	tsb.id,
-  tsb.booking_date::date::text as booking_date, 
-	json_build_object('id', ms.id,'slot_timing', ms.slot_timing ) as slot,
-	tsb.description ,
-	tsb.status,
-	json_build_object('id',mst.id, 'service_name', mst."name" ),
-	json_build_object(
-    'id',tuv.id, 
-    'license_plate', tuv.license_plate , 
-    'odo_reading', tuv.odo_reading )
-  as vehicle_detail
-from t_slot_booking tsb 
-left join m_slots ms on 
-  tsb.slot_id = ms.id and ms.is_active = true
-left join m_service_type mst on 
-  tsb.service_type_id = mst.id and mst.is_active =true
-left join t_user_vehicle tuv on tsb.vehicle_id = tuv.id 
-where 
-  tsb.user_id =$1 
-  AND tsb.is_active = true 
-  AND tsb.booking_date>=current_date;`;
+export const getUserBookingDetailsQuery = `SELECT 
+    tsb.id,
+    tsb.booking_date::date::text AS booking_date, 
+    json_build_object('id', ms.id, 'slot_timing', ms.slot_timing) AS slot,
+    tsb.description,
+    tsb.status,
+    json_build_object('id', mst.id, 'service_name', mst."name") AS service_type, -- Added missing alias
+    json_build_object(
+        'id', tuv.id, 
+        'license_plate', tuv.license_plate, 
+        'odo_reading', tuv.odo_reading
+    ) AS vehicle_detail
+FROM t_slot_booking tsb 
+LEFT JOIN m_slots ms ON 
+    tsb.slot_id = ms.id AND ms.is_active = true
+LEFT JOIN m_service_type mst ON 
+    tsb.service_type_id = mst.id AND mst.is_active = true
+LEFT JOIN t_user_vehicle tuv ON 
+    tsb.vehicle_id = tuv.id 
+WHERE 
+    tsb.user_id = $1
+    AND tsb.is_active = true 
+    AND tsb.booking_date >= CURRENT_DATE
+    AND tsb.id NOT IN (
+        SELECT tsr.t_slot_id  
+        FROM t_service_record tsr 
+        WHERE tsr.t_user_id = $1
+          AND tsr.t_slot_id IS NOT NULL
+    );;`;
