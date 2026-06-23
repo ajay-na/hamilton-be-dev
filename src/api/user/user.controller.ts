@@ -15,7 +15,7 @@ import { ApiPaginatedResponse } from '../../common/decorators/api-response.decor
 import { IdParamsDto } from '../../common/dto/user-params.dto';
 import { CreateUserVehicleDto } from './dto/add-vehicle-user.dto';
 import { CreateBookingDto } from './dto/get-slot-booking-details.dto';
-import { ServiceRecordResponseDto } from './dto/get-user-live-booking-status.response.dto';
+import { LiveServiceRecordResponseDto } from './dto/get-user-live-booking-status.response.dto';
 import { UserVehicleResponseDto } from './dto/get-users-vehicle-response.dto';
 import { VehicleResponseDto } from './dto/get-vehicle-detail-by-id-response.dto';
 import { VehicleServiceDto } from './dto/service-history-dto';
@@ -116,13 +116,13 @@ export class UserController {
     return this.userService.getUserServiceHistory(user.id);
   }
 
-  @ApiOperation({ summary: 'Get users booking details' })
-  @ApiPaginatedResponse(ServiceRecordResponseDto, true)
+  @ApiOperation({ summary: 'Get users live service booking details' })
+  @ApiPaginatedResponse(LiveServiceRecordResponseDto, true)
   @UseGuards(JwtAuthGuard)
   @Get('live-service')
   async getUserLiveBookingDetails(
     @CurrentUser() user: CurrentuserDto,
-  ): Promise<ServiceRecordResponseDto[]> {
+  ): Promise<LiveServiceRecordResponseDto[]> {
     return this.userService.getUserLiveBookingDetails(user.id);
   }
 }

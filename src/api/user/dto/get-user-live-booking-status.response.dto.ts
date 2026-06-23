@@ -54,7 +54,7 @@ class ServiceHistoryDto {
   updated_at: string;
 }
 
-export class ServiceRecordResponseDto {
+export class LiveServiceRecordResponseDto {
   @ApiProperty({
     description: 'Unique identifier for the service record',
     example: '59232a69-a16a-4ee5-a1e2-f25433eecdd8',
