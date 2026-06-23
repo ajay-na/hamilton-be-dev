@@ -8,6 +8,7 @@ export async function up(knex: Knex): Promise<void> {
       .notNullable()
       .references('id')
       .inTable('t_service_record')
+      .unique()
       .onDelete('CASCADE');
     table.text('firstname');
     table.text('lastname');
