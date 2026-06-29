@@ -6,6 +6,7 @@ import { SlotsAdminModule } from './api/admin/slots/slots.module';
 import { UserAdminModule } from './api/admin/user/user.module';
 import { VehicleServiceAdminModule } from './api/admin/vehicle-service/vehicle-service.module';
 import { BrandModule } from './api/brand/brand.module';
+import { InvoiceUserModule } from './api/invoice/invoice.module';
 import { ServiceTypeModule } from './api/service-type/service-type.module';
 import { SlotsModule } from './api/slots/slot.module';
 import { SpareModule } from './api/spare/spare.module';
@@ -42,6 +43,7 @@ import { LoggerModule } from './logger/logger.module';
     ServiceTypeModule,
     InvoiceModule,
     SpareModule,
+    InvoiceUserModule,
   ],
   controllers: [AppController],
   providers: [],

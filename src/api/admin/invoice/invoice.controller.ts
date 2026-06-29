@@ -40,7 +40,6 @@ export class InvoiceController {
   @Header('Content-Disposition', 'attachment; filename=invoice.pdf')
   async downloadInvoice(@Param('id') id: string, @Res() res: any) {
     const pdfBuffer = await this.invoiceService.generateInvoicePdf(id);
-
     res.send(pdfBuffer);
   }
 
