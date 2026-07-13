@@ -38,9 +38,7 @@ export class InvoiceService {
       const compiledTemplate = handlebars.compile(templateHtml);
       const finalHtml = compiledTemplate(data);
 
-      const puppeteer = await (eval('import("puppeteer")') as Promise<
-        typeof import('puppeteer')
-      >);
+      const puppeteer = await (eval('import("puppeteer")') as Promise<any>);
       const browser = await puppeteer.launch({
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
