@@ -21,8 +21,7 @@ export class BrandController {
 
   @ApiOperation({ summary: 'Get all brands' })
   @ApiPaginatedResponse(GetAllBrandDto, true)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN, Role.STAFF)
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getAllBrand(
     @Query() params: GetAllBrandQueryDTO,
@@ -32,8 +31,7 @@ export class BrandController {
 
   @ApiOperation({ summary: 'Get brand details by id' })
   @ApiPaginatedResponse(BrandDetailResponseDto)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN, Role.STAFF)
+  @UseGuards(JwtAuthGuard)
   @Get('detail/:id')
   async getBrandDetailsById(
     @Param() param: IdParamsDto,

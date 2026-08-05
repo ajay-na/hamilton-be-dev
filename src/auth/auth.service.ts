@@ -10,6 +10,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { DatabaseService } from '../database/database.service';
 import { LoginBody } from './dto/login-body.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
+import { getUpsertUserQuery } from './query/get-user-upsert.query';
 import { GoogleUser } from './strategies/google.strategy';
 
 interface UserEntity {
@@ -31,6 +32,28 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {
     this.googleClient = new OAuth2Client(process.env.GOOGLE_WEB_CLIENT_ID);
+  }
+
+  async handleOTPverification(mobileNo: string) {
+    try {
+      const [user] = await this.db.query(getUpsertUserQuery, [mobileNo]);
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      return {
+        access_token: this.jwtService.sign({
+          sub: user.id,
+          email: user.email,
+          role: user.role_id,
+          name: user.firstname,
+          is_profile_completed: user.is_profile_completed,
+          is_vehicle_added: user.is_vehicle_added,
+        }),
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 
   async verifyUserOnDb(googleUser: any) {
